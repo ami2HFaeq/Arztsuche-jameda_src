@@ -1,0 +1,13 @@
+<ion-content class="jam-content jam-pageNotFound jam-is-phone has-header" scroll="true">
+
+	<div class="pageNotFound-container">
+		<h1 class="jam-h1" ng-bind-html="pageNotFound.headline"></h1>
+		<p ng-bind-html="pageNotFound.message"></p>
+
+		<button class="button button-block jam-next-page icon-right ion-chevron-right" ng-click="pageNotFound.goToHome()" ng-if="pageNotFound.showButton">Hier geht's zur Arztsuche</button>
+
+		<div class="fehler-404">
+			<img ng-src="{{pageNotFound.image}}">
+		</div>
+	</div>
+</ion-content>

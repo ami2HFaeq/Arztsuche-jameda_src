@@ -1,0 +1,504 @@
+<ion-content class="jam-content jam-page-profile jam-is-tablet has-header" scroll="false" id="profile-{{ ::profile.data.ref_id }}_{{ ::profile.data.art }}">
+	<ion-scroll class="profile-right">
+		<div class="content-box-01 jam-ratings {{ ::profile.data.deviceType }}">
+			<div ng-if="profile.data.bewertungen >= 1">
+				<a ng-href="{{ ::profile.data.evaluateOverviewURL }}" class="button button-block icon-right ion-chevron-right">
+					<div class="rating rating-{{ profile.data.rateInt | number:0 }}">
+						<h3 class="jam-h3">Gesamtnote</h3>
+						<div class="rating-value">{{ ::profile.data.gesamtNoteFormatted }}</div>
+					</div>
+					<div class="jam-ellipsis {{ profile.data.ratingsTextClass }}">{{ profile.data.ratingsText }}</div>
+				</a>
+			</div>
+			<div ng-if="profile.data.bewertungen < 1">
+				<button class="button button-block">
+					<div class="rating rating-0">
+						<h3 class="jam-h3">Gesamtnote</h3>
+						<div class="rating-value">{{ ::profile.data.gesamtNoteFormatted }}</div>
+					</div>
+					<div class="jam-ellipsis {{ profile.data.ratingsTextClass }}">{{ profile.data.ratingsText }}</div>
+				</button>
+			</div>
+		</div>
+
+		<div class="jam-ratings-info light-font" ng-if="profile.data.ratingsAdditionalInfo != ''">
+			({{ ::profile.data.ratingsAdditionalInfo }})
+		</div>
+
+		<div class="box-pre-header" ng-if="profile.data.showPremiums">
+			<h3 class="jam-h3">Anzeige</h3>
+			<h2 class="jam-h2 box-header no-padding">{{ ::profile.data.premiumsHeadline }} in der Umgebung</h2>
+		</div>
+		<div class="content-box-01 jam-premiums no-padding box-sub jam-is-tablet" ng-if="profile.data.showPremiums">
+			<ul>
+				<li ng-if="profile.data.showPremiumsTpf" class="premium-entry premium-entry-tpf">
+					<a  ng-click="profile.gotoProfile(profile.data.premiumsTpfData, $event, 'kiu-tpf');" onclick="return false;">
+						<div class="portrait portrait-mini {{ ::profile.data.premiumsTpfData.spriteClass }}">
+							<img ng-src="{{ ::profile.data.premiumsTpfData.portrait.pfad }}/medium/{{ ::profile.data.premiumsTpfData.portrait.datei }}" ng-if="profile.data.premiumsTpfData.hasProfileImage" width="50" height="66" />
+						</div>
+						<div class="premium-info">
+							<div class="jam-h2 jam-ellipsis">
+								{{ ::profile.data.premiumsTpfData.profileName }}
+							</div>
+							<div class="premium-address jam-h3 light-font">
+								{{ ::profile.data.premiumsTpfData.address }}<br />
+								{{ ::profile.data.premiumsTpfData.city }}
+							</div>
+						</div>
+						<div class="premium-tpf-details">
+							Tel.: {{ ::profile.data.premiumsTpfData.telephone }}<br />
+							<a  ng-click="profile.JamHelperFactory.openDoctorWebsite(profile.data.premiumsTpfData.website, profile.data.premiumsTpfData, 'profile')" class="jam-tel-text" ng-if="profile.data.premiumsTpfData.website">{{ ::profile.data.premiumsTpfData.website }}</a>
+						</div>
+						<div class="clearfix"></div>
+					</a>
+				</li>
+				<li ng-repeat="premiumData in ::profile.data.premiumsData | limitTo : profile.data.premiumsLimit track by premiumData.fullRefId" class="premium-entry">
+					<a  ng-click="profile.gotoProfile(premiumData, $event, 'kiu');" onclick="return false;">
+						<div class="portrait portrait-mini {{ ::premiumData.spriteClass }}">
+							<img ng-src="{{ ::premiumData.portrait.pfad }}/medium/{{ ::premiumData.portrait.datei }}" ng-if="premiumData.hasProfileImage" width="50" height="66" />
+						</div>
+						<div class="premium-info">
+							<div class="jam-h2 jam-ellipsis">
+								{{ ::premiumData.profileName }}
+							</div>
+							<div class="premium-distance jam-h3 light-font">
+								<span>{{ ::premiumData.fachStringComplete }}<br></span>
+								{{ ::premiumData.distance }}
+							</div>
+						</div>
+						<div class="premium-rating">
+							<div class="rating rating-{{ premiumData.rateInt | number:0 }}">
+								<h3 class="jam-h3">Note</h3>
+								<div class="rating-value">{{ ::premiumData.gesamtNoteFormatted }}</div>
+							</div>
+						</div>
+					</a>
+				</li>
+				<li>
+					<a ng-href="{{ ::profile.data.showAllPremiumsUrl }}" ng-click="profile.trackShowAllNearbyEntries();" class="button button-block jam-next-page icon-right ion-chevron-right">{{ ::profile.data.showAllPremiumsText }}</a>
+				</li>
+				<div class="clearfix"></div>
+			</ul>
+		</div>
+
+		<div class="content-box-01 jam-map no-padding" ng-if="profile.data.showOtb == 1">
+			<h2 class="jam-h2 box-header box-padding">Standort</h2>
+			<div ng-if="profile.data.premium_paket > 3" class="jam-map-google phone" ng-style="{'height' : profile.googleMapsStatic.height}" style="min-height: 250px;">
+				<ion-spinner icon="dots" class="jam-loader" ng-if="profile.googleMapsStatic.url == ''"></ion-spinner>
+				<div ng-if="profile.googleMapsStatic.url != ''">
+					<img ng-src="{{profile.googleMapsStatic.url}}" height="{{profile.googleMapsStatic.height}}" width="100%" alt="Google Maps" title="Karte - {{profile.data.name_nice}}">
+				</div>
+				<div ng-if="profile.googleMapsStatic.url != ''" class="ion-location rating-color-{{ profile.data.rateInt | number:0 }}"></div>
+			</div>
+			<div ng-if="profile.data.premium_paket <= 3" class="jam-map-google dummy tablet" style="min-height: 250px;" id="profile-kbz-map-{{ ::profile.data.ref_id }}">
+				<ion-spinner icon="dots" class="jam-loader" ng-if="profile.data.showKbzMapLoading"></ion-spinner>
+				<div ng-if="profile.data.showKbzMap && profile.googleMapsStatic.url != ''">
+					<img ng-src="{{profile.googleMapsStatic.url}}" height="{{profile.googleMapsStatic.height}}" width="100%" alt="Google Maps" title="Karte - {{profile.data.name_nice}}">
+				</div>
+				<div class="ion-location rating-color-{{ profile.data.rateInt | number:0 }}" ng-if="profile.data.showKbzMap && !profile.data.showKbzMapLoading"></div>
+				<button class="button profile-toggle-kbz-map" ng-if="!profile.data.showKbzMap && !profile.data.showKbzMapLoading" ng-click="profile.toggleKbzMap(profile.data)">Karte anzeigen</button>
+			</div>
+			<button ng-click="profile.openGoogleMaps()" class="button button-block jam-next-page icon-right ion-map" ng-if="profile.data.showKbzMap">In Kartenapp anzeigen</button>
+		</div>
+
+		<div class="box-pre-header" ng-if="profile.data.showSubInstitutionen">
+			<h2 class="jam-h2 box-header no-padding">{{ ::profile.data.subInstitutionenHeadline }}</h2>
+		</div>
+		<div class="content-box-01 jam-premiums no-padding box-sub" ng-if="profile.data.showSubInstitutionen">
+			<ul>
+				<li ng-repeat="premiumData in ::profile.data.subInstitutionenData track by premiumData.fullRefId" class="premium-entry">
+					<a  ng-click="profile.gotoProfile(premiumData, $event, 'institution');" onclick="return false;">
+						<div class="portrait portrait-mini {{ ::premiumData.spriteClass }}">
+							<img ng-src="{{ ::premiumData.portrait.pfad }}/medium/{{ ::premiumData.portrait.datei }}" ng-if="premiumData.hasProfileImage" />
+						</div>
+						<div class="premium-info">
+							<div class="jam-h2 jam-ellipsis">{{ ::premiumData.profileName }}</div>
+							<div class="premium-distance jam-h3 light-font jam-ellipsis">{{ ::premiumData.fachStringComplete }}</div>
+						</div>
+						<div class="premium-rating">
+							<div class="rating rating-{{ premiumData.rateInt | number:0 }}">
+								<h3 class="jam-h3">Note</h3>
+								<div class="rating-value">{{ ::premiumData.gesamtNoteFormatted }}</div>
+							</div>
+						</div>
+					</a>
+				</li>
+				<li>
+					<a ng-href="{{ ::profile.data.showAllSubInstitutionenUrl }}" class="button button-block jam-next-page icon-right ion-chevron-right">{{ ::profile.data.showAllSubInstitutionenText }}</a>
+				</li>
+				<div class="clearfix"></div>
+			</ul>
+		</div>
+
+		<div class="box-pre-header" ng-if="profile.data.showSubPersonen">
+			<h2 class="jam-h2 box-header no-padding" ng-bind-html="profile.data.subPersonenHeadline"></h2>
+		</div>
+		<div class="content-box-01 jam-premiums no-padding box-sub" ng-if="profile.data.showSubPersonen">
+			<ul>
+				<li ng-repeat="premiumData in ::profile.data.subPersonenData track by premiumData.fullRefId" class="premium-entry">
+					<a  ng-click="profile.gotoProfile(premiumData, $event, 'kollegen');" onclick="return false;">
+						<div class="portrait portrait-mini {{ ::premiumData.spriteClass }}">
+							<img ng-src="{{ ::premiumData.portrait.pfad }}/medium/{{ ::premiumData.portrait.datei }}" ng-if="premiumData.hasProfileImage" />
+						</div>
+						<div class="premium-info">
+							<div class="jam-h2 jam-ellipsis">{{ ::premiumData.profileName }}</div>
+							<div class="premium-distance jam-h3 light-font jam-ellipsis">{{ ::premiumData.fachStringComplete }}</div>
+						</div>
+						<div class="premium-rating">
+							<div class="rating rating-{{ premiumData.rateInt | number:0 }}">
+								<h3 class="jam-h3">Note</h3>
+								<div class="rating-value">{{ ::premiumData.gesamtNoteFormatted }}</div>
+							</div>
+						</div>
+					</a>
+				</li>
+				<li>
+					<a ng-href="{{ ::profile.data.showAllSubPersonenUrl }}" class="button button-block jam-next-page icon-right ion-chevron-right" ng-bind-html="profile.data.showAllSubPersonenText"></a>
+				</li>
+				<div class="clearfix"></div>
+			</ul>
+		</div>
+
+		<div class="content-box-01" ng-if="profile.data.profil_hinweis">
+			<span ng-bind-html="profile.data.profil_hinweis"></span>
+		</div>
+
+		<div ng-if="profile.data.bilder" class="content-box-01 jam-gallery no-padding" id="profile-gallery-small-{{ ::profile.data.ref_id }}_{{ ::profile.data.art }}">
+			<h2 class="jam-h2 box-header box-padding">Meine Praxisbilder</h2>
+			<ion-slide-box show-pager="true" ng-click="profile.openModal()" on-slide-changed="profile.slideChanged('small')" delegate-handle="profile-gallery-small">
+				<ion-slide ng-repeat="image in ::profile.data.bilder track by image.datei">
+
+					<div class="loadSliderImage" jam-src="{{ image.pfad }}/big/{{ image.datei }}" jam-width="{{ image.groessen.big.width }}" jam-height="{{ image.groessen.big.height }}"></div>
+				</ion-slide>
+			</ion-slide-box>
+		</div>
+
+		<div ng-if="profile.data.videoUrl != false" class="content-box-01 jam-video no-padding">
+			<h2 class="jam-h2 box-header box-padding">Mein Praxisvideo</h2>
+			<div class="jam-res-video-container">
+				<iframe ng-src="{{ profile.trustAsResourceUrl(profile.data.videoUrl) }}" frameborder="0" allowfullscreen></iframe>
+			</div>
+		</div>
+
+		<div ng-if="profile.data.premiumContents" class="content-box-01 jam-doctor-articles no-padding jam-category">
+			<h2 class="jam-h2 box-header box-padding">Weitere Informationen</h2>
+			<ul>
+				<li ng-repeat="subPage in ::profile.data.premiumContents track by subPage.id">
+					<ion-item class="item-icon-right contentModul border" ng-click="profile.goToURL(profile.config.urlPrefix+'/profil/'+subPage.sub_pfad+'/info/'+profile.data.ref_id+'_'+profile.data.art+'/')">
+						<h3 ng-bind-html="subPage.headline"></h3>
+						<p class="line-clamp-3" ng-bind-html="subPage.content"></p>
+						<i class="icon ion-chevron-right"></i>
+					</ion-item>
+				</li>
+			</ul>
+		</div>
+
+		<div ng-if="profile.data.reviewModul && profile.data.reviewModul.bewertungen.length > 0" class="content-box-01 jam-doctor-articles no-padding jam-category">
+			<h2 class="jam-h2 box-header box-padding">Das sagen Patienten über {{::profile.data.name_kurz}}</h2>
+			<ul>
+				<li ng-repeat="review in ::profile.data.reviewModul.bewertungen track by $index">
+					<ion-item class="item-icon-right reviewModul border" ng-class="{'isArch': review.is_archived}" ng-click="profile.goTo('profileEvaluateSub', { path : 'profil', fullRefRateId : profile.data.fullRefId+'_'+review.b_id })">
+						<small class="top-liner one-line">{{review.header}}</small>
+						<div style="clear:left;"></div>
+						
+						<div class="grade grade-{{review.gesamt_note_class}}" ng-if="review.b_stand != 4">
+							<span class="grade-title">Note</span>
+							<span class="grade-value">{{review.gesamt_note_formatted}}</span>
+						</div>
+
+						<div class="grade jam-qm-logo" ng-if="review.b_stand == 4"></div>
+
+						<div class="paddingContent">
+							<h3 class="title line-clamp-2">{{review.titel}}</h3>
+							<p class="comment line-clamp-3" ng-bind-html="review.kommentar"></p>
+						</div>
+
+						<i class="icon ion-chevron-right"></i>
+					</ion-item>
+				</li>
+				<li>
+					<a class="button button-block jam-next-page icon-right ion-chevron-right" ng-href="{{profile.config.urlPrefix}}{{profile.data.reviewModul.link.url}}">{{::profile.data.reviewModul.link.name}}</a>
+				</li>
+			</ul>
+		</div>
+
+		<div ng-if="profile.data.articles && profile.data.articles.length > 0 && profile.showArticles" class="content-box-01 jam-doctor-articles no-padding jam-category">
+			<h2 class="jam-h2 box-header box-padding">Meine Artikel im Experten-Ratgeber</h2>
+			<ul>
+				<li ng-repeat="article in profile.data.articles | limitTo: 3" class="teaser-small-item">
+					<div class="teaser-small">
+						<div class="item item-thumbnail-left item-icon-right" ng-click="profile.gotoArticle(article.article_url, article.category_url);">
+							<div class="article-image" style="background-image: url('{{ article.img.src }}');" title="{{ article.img.title }}"></div>
+							<div class="wrapper">
+								<h2>{{ article.name }}</h2>
+								<div class="teaser-info">Verfasst am {{ article.date }}</div>
+							</div>
+							<i class="icon ion-chevron-right"></i>
+						</div>
+					</div>
+				</li>
+				<li ng-if="profile.data.articles.length > 3">
+					<a class="button button-block jam-next-page icon-right ion-chevron-right" ng-click="profile.gotoArticleOverview(profile.data.fullRefId);">Alle Artikel anzeigen ({{ profile.data.articles.length }})</a>
+				</li>
+			</ul>
+		</div>
+
+		<div ng-if="profile.data.inst_profil_url && profile.data.verbind_typ != 'E'" class="content-box-01 jam-areyoudrx no-padding">
+			<h2 class="jam-h2 box-header box-padding">{{profile.data.inst_bezeichnung}}</h2>
+			<a ng-href="{{ profile.config.urlPrefix }}{{profile.data.inst_profil_url}}" ng-click="profile.trackInstClick();" class="button button-block jam-next-page icon-right ion-chevron-right">
+				<div class="portrait portrait-small portrait-abteilung">
+					<img ng-src="https://d1gm60ivvin8hd.cloudfront.net/premium/_uploads/portraits/medium/{{ profile.data.inst_portrait.datei }}" ng-if="profile.data.inst_portrait.datei" />
+				</div>
+				<div class="jam-areyoudrx-info2" ng-if="profile.data.inst_name[0] && !profile.data.verbund_inst_name_nice">
+					<span>{{profile.data.inst_name[0]}}</span><br>
+					<span>{{profile.data.inst_name[1]}} {{profile.data.inst_name[2]}}</span>
+				</div>
+				<div class="jam-areyoudrx-info2" ng-if="profile.data.verbund_inst_name_nice">
+					{{profile.data.verbund_inst_name_nice}}
+				</div>
+			</a>
+		</div>
+
+		<div ng-if="profile.data.locationModule.showLocationModule" class="content-box-01 jam-doctor-sub-contents no-padding">
+			<h2 class="jam-h2 box-header box-padding">Meine Standorte & Kollegen</h2>
+			<ul>
+				<li ng-if="profile.data.locationModule.hasMultiLocations">
+					<a  ng-click="profile.gotoLocationsPage(profile.data, $event)" onclick="return false;" class="button button-block jam-next-page icon-right ion-chevron-right">Meine Standorte ({{ ::profile.data.num_multi_eintraege }}) anzeigen</a>
+				</li>
+				<li ng-if="profile.data.locationModule.hasColleagues">
+					<a ng-href="{{ ::profile.config.urlPrefix }}/profil/{{ ::profile.data.kollegen_link.url_part }}/{{ ::profile.data.fullRefId }}/" ng-click="profile.trackShowColleagues();" class="button button-block jam-next-page icon-right ion-chevron-right">Meine Kollegen anzeigen</a>
+				</li>
+			</ul>
+		</div>
+
+		<div ng-if="profile.data.showAreYouDrX" class="content-box-01 jam-areyoudrx no-padding">
+			<h2 class="jam-h2 box-header box-padding jam-ellipsis">{{ ::profile.data.areYouText }}</h2>
+			<a ng-href="https://www.jameda.de/fachkreise/index.php?id={{ ::profile.data.fullRefId }}" ng-click="profile.trackAreYou();" target="_system" class="button button-block jam-next-page icon-right ion-chevron-right">
+				<div class="portrait portrait-small {{ ::profile.data.spriteClass }}">
+					<img ng-src="{{ ::profile.data.portrait.pfad }}/medium/{{ ::profile.data.portrait.datei }}" ng-if="profile.data.hasProfileImage" />
+				</div>
+				<div class="jam-areyoudrx-info">
+					<span ng-if="profile.data.art != 1">Ändern Sie kostenlos Ihre Daten oder stellen Sie sich persönlich mit Bildern u. Texten Ihren Patienten vor.</span>
+					<span ng-if="profile.data.art == 1">Ändern Sie kos&shy;ten&shy;los Ihre Da&shy;ten oder bieten Sie jetzt die Online-Terminbuchung an.</span>
+				</div>
+			</a>
+		</div>
+		<div class="light-font jam-last-update">
+			Profilaufrufe {{ profile.data.aufrufeFormatted }}<br />
+			<span ng-if="profile.data.lastUpdate">Letzte Aktualisierung {{ ::profile.data.lastUpdate }}</span>
+		</div>
+		<jam-footer></jam-footer>
+	</ion-scroll>
+	<div class="profile-left content-box-01 no-padding" id="profile-{{ ::profile.data.ref_id }}">
+
+		<div class="profile-left-top">
+
+			<div class="jam-profile jam-is-tablet">
+				<div class="badge-container-tablet" ng-if="profile.data.showTop10Badge || profile.data.showTop5Badge || profile.data.showRatingsBadge" ng-class="{'two-badges': profile.data.badgesCnt == 2, 'three-badges': profile.data.badgesCnt == 3}">
+					<div class="badge-container jam-is-tablet" >
+						<div class="jam-badge jam-badge-top10 jam-is-tablet" ng-if="profile.data.showTop10Badge" ng-click="profile.showBadge({type: 2})"></div>
+						<div class="jam-badge jam-badge-top5 jam-is-tablet" ng-if="profile.data.showTop5Badge" ng-click="profile.showBadge({type: 1})"></div>
+						<div class="jam-badge jam-badge-ratings jam-is-tablet" ng-if="profile.data.showRatingsBadge" ng-click="profile.showBadge({title: 'Qualitätsindizes', type: 0})"></div>
+					</div>
+				</div>
+
+				<div class="portrait portrait-supersize {{ ::profile.data.spriteClass }}">
+					<img ng-src="{{ ::profile.data.portrait.pfad }}/medium/{{ ::profile.data.portrait.datei }}" ng-if="profile.data.hasProfileImage" width="135" height="179" ng-click="profile.openModalPortrait()" />
+					<div class="fav show" ng-if="profile.JamHelperFactory.isFavourite(profile.data.fullRefId)"><i class="icons ion-android-star"></i></div>
+					<a ng-if="profile.data.showEditProfileButton" ng-click="profile.showEditProfile(profile.data.editProfileLink)" class="button jam-edit-profile">Profil bearbeiten</a>
+				</div>
+				<div class="details">
+					<h1 class="jam-h1">{{ ::profile.data.name_nice }}</h1>
+					<p class="light-font fach-string">{{ ::profile.data.fachStringComplete }}</p>
+					<div class="details-02">
+						<div class="left">
+							<p>{{ ::profile.data.strasse }}<br />{{ ::profile.data.plz }} {{ ::profile.data.ort }}</p>
+							<p>Tel.: {{ ::profile.data.telephone }}</p>
+							<p class="url">
+								<a ng-click="profile.JamHelperFactory.openDoctorWebsite(profile.data.home_url, profile.data)" class="" ng-if="profile.data.home_url && profile.data.premium_paket > 4 && profile.isNoFollowTest" rel="nofollow">{{ ::profile.data.home_url }}</a>
+								<a ng-click="profile.JamHelperFactory.openDoctorWebsite(profile.data.home_url, profile.data)" class="" ng-if="profile.data.home_url && profile.data.premium_paket > 4 && !profile.isNoFollowTest">{{ ::profile.data.home_url }}</a>
+							</p>
+						</div>
+						<div class="right" ng-if="profile.data.rateText != '' && profile.data.reviewLink">
+							<a ng-href="{{ ::profile.data.reviewLink }}" class="button button-block icon-left ion-compose jam-icon-rate" ng-click="profile.trackReviewClick();">{{ ::profile.data.rateText }}</a>
+						</div>
+					</div>
+					<div class="jam-actions-tablet">
+						<div class="jam-actions row">
+							<div class="jam-action col">
+								<a  ng-class="profile.JamHelperFactory.isFavourite(profile.data.fullRefId) ? 'ion-android-star jam-action-active' : 'ion-android-star-outline'" class="jam-action-favourite" ng-click="profile.toggleFavourite(profile.data.fullRefId)"></a>
+							</div>
+							<div class="jam-action col">
+								<a  ng-class="profile.data.isRecommended ? 'jam-action-active' : ''" class="ion-thumbsup jam-action-recommend" ng-click="profile.doRecommend(profile.data)"><span>{{ ::profile.data.numRecommendations }}</span></a>
+							</div>
+							<div class="jam-action no-border col">
+								<a  class="ion-more" ng-click="profile.showActions(profile.data)"></a>
+							</div>
+						</div>
+						<div class="details-info light-font" ng-click="profile.showAeaInfo()">
+							<div class="left">
+								<span ng-if="profile.data.empfehl_quote > 0">Weiterempfehlung:<br /></span>
+								<span>Kollegenempfehlung:</span>
+							</div>
+							<div class="right">
+								<span ng-if="profile.data.empfehl_quote > 0">{{ profile.data.empfehl_quote/10 | number:0 }}%
+									<span class="ion-ios-heart-outline"></span><br />
+								</span>
+								<span>{{ (profile.data.empfehl_kolleg == 0) ? '&ndash;' : profile.data.empfehl_kolleg }} <div class="jam-badge jam-aea-icon jam-is-tablet" style="margin-left:8px;"></div></span>
+							</div>
+						</div>
+					</div>
+					<div class="clearfix"></div>
+				</div>
+			</div>
+		</div>
+		<div ng-if="profile.data.showOtb == 1" class="otb-container">
+			<div class="otb-container-left">
+				<div class="jam-business-hours">
+					<h2 class="jam-h2 box-header">Öffnungszeiten</h2>
+					<div ng-if="profile.data.businessHours">
+						<table class="business-hours">
+							<tr ng-repeat-start="businessDay in ::profile.data.businessHours" ng-if="businessDay.rows">
+								<td class="business-day-day">{{ ::businessDay.dayShort }}</td>
+								<td class="business-day light-font">{{ ::businessDay.rows[0] }}</td>
+								<td class="business-day-to light-font">
+									<span ng-if="businessDay.rows[1] && businessDay.rows[1] != 'n.V.'">-</span>
+								</td>
+								<td class="business-day light-font">
+									<span ng-if="businessDay.rows[0] && businessDay.rows[0] != 'n.V.'">{{ ::businessDay.rows[1] }}</span>
+								</td>
+							</tr>
+							<tr ng-repeat-end ng-if="businessDay.rows[2] || businessDay.rows[3]">
+								<td class="business-day-day">&nbsp;</td>
+								<td class="business-day light-font">{{ ::businessDay.rows[2] }}</td>
+								<td class="business-day-to light-font">
+									<span ng-if="businessDay.rows[3] && businessDay.rows[3] != 'n.V.'">-</span>
+								</td>
+								<td class="business-day light-font">{{ ::businessDay.rows[3] }}</td>
+							</tr>
+						</table>
+					</div>
+					<div ng-if="!profile.data.businessHours">
+						<p>Keine Öffnungszeiten hinterlegt.</p>
+					</div>
+				</div>
+				<div ng-if="profile.data.showInsurance" class="jam-insurance no-padding">
+					<h2 class="jam-h2 box-header box-padding">Versicherung</h2>
+					<div class="jam-insurance-box">
+						<div class="ion-ios-checkmark-empty" ng-if="profile.data.abrtyp == 1">Kassenpatienten</div>
+						<div class="ion-ios-checkmark-empty">Privatpatienten</div>
+						<div class="clearfix"></div>
+					</div>
+				</div>
+			</div>
+			<div class="otb-container-right" ng-if="profile.data.showOtb == 1 && profile.data.otb.services">
+				<div class="jam-otb">
+					<h2 class="jam-h2 box-header">Buchen Sie Ihren Termin direkt online</h2>
+
+					<div class="otb1-content">
+						<div class="appointment-reason-container" data-tap-disabled="true">
+							<select class="jam-select deselected otb-service" name="insuranceType" ng-change="profile.toggleOtbInsuranceType(false)" ng-model="profile.insuranceType">
+								<option value="kasse">Gesetzlich versichert</option>
+								<option value="privat">Privat versichert</option>
+							</select>
+							<div class="jam-bullet-number">1</div>
+						</div>
+
+						<div class="appointment-reason-container" data-tap-disabled="true">
+							<select class="jam-select otb-service" name="service" ng-change="profile.toggleOtbInsuranceType(false)" ng-model="profile.serviceType" ng-disabled="profile.disableServiceType">
+								<option value="select">Behandlungsgrund wählen</option>
+								<option value="{{item.id}}" ng-repeat="item in profile.data.otb.services track by $index" ng-if="profile.config.insuranceTypeIds[profile.insuranceType].indexOf(item.insurance_type) != -1">
+									{{item.title}}
+								</option>
+							</select>
+							<div class="jam-bullet-number selected">2</div>
+						</div>
+					</div>
+
+					<div id="kalender_container{{ ::profile.data.ref_id }}" class="kalender_container">
+						<div class="kalender_headline">
+							<a  onclick="return jamOTVKalProfil.slideKalender('rechts', this);" class="jamOTV pfeil_weiter ion-chevron-left pfeil_weiter_disabled" id="otbButtonPrevious"></a>
+							<div class="jamOTV kalender_head_text" id="kalender_head_text"></div>
+							<a  onclick="return jamOTVKalProfil.slideKalender('links', this);" class="jamOTV pfeil_weiter ion-chevron-right" id="otbButtonNext"></a>
+						</div>
+						<div class="kalender_viewport">
+							<div id="kalender_slider_header" style="width: 100000px; white-space: nowrap; overflow: hidden;"></div>
+							<ion-scroll class="kalender_slider" style="width: 100000px; white-space: nowrap; overflow: hidden; margin-left: 0px; height: 150px;">
+								<div id="kalender_slider_content_box" style="position: relative; height: 150px;">
+									<div id="kalender_slider_content"></div>
+								</div>
+							</ion-scroll>
+						</div>
+						<div ng-class="profile.data.showOtb == 1 ? 'kalender_scroller_overlay' : ''"></div>
+						<div id="kalender_ausgegraut{{ profile.data.ref_id }}" class="cal-style" style="display: block;">
+							<div class="kalender_ausgegraut_msg"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="jam-tablet-non-otb-info" ng-if="profile.data.showOtb != 1">
+			<div class="jam-business-hours">
+				<h2 class="jam-h2 box-header">Öffnungszeiten</h2>
+				<div ng-if="profile.data.businessHours">
+					<table class="business-hours">
+						<tr ng-repeat="businessDay in ::profile.data.businessHours track by businessDay.day" ng-if="businessDay.rows">
+							<td class="business-day-day">{{ ::businessDay.day }}</td>
+							<td class="business-day light-font">{{ ::businessDay.rows[0] }}</td>
+							<td class="business-day-to light-font">
+								<span ng-if="businessDay.rows[1] && businessDay.rows[1] != 'n.V.'">-</span>
+							</td>
+							<td class="business-day light-font">
+								<span ng-if="businessDay.rows[0] && businessDay.rows[0] != 'n.V.'">{{ ::businessDay.rows[1] }}</span>
+							</td>
+							<td class="business-day-middle light-font">
+								<span ng-if="businessDay.rows[2] || businessDay.rows[3]">und</span>
+								<span ng-if="!(businessDay.rows[2] || businessDay.rows[3])">&nbsp;</span>
+							</td>
+							<td class="business-day light-font">{{ ::businessDay.rows[2] }}</td>
+							<td class="business-day-to light-font"><span ng-if="businessDay.rows[3] && businessDay.rows[3] != 'n.V.'">-</span></td>
+							<td class="business-day light-font">{{ ::businessDay.rows[3] }}</td>
+						</tr>
+					</table>
+				</div>
+				<div ng-if="!profile.data.businessHours"><p style="margin-top: 16px;">Keine Öffnungszeiten hinterlegt.</p></div>
+			</div>
+
+			<div ng-if="profile.data.showInsurance" class="jam-insurance no-padding">
+				<h2 class="jam-h2 box-header box-padding">Versicherung</h2>
+				<div class="jam-insurance-box">
+					<div class="ion-ios-checkmark-empty" ng-if="profile.data.abrtyp == 1">Kassenpatienten</div>
+					<div class="ion-ios-checkmark-empty">Privatpatienten</div>
+					<div class="clearfix"></div>
+				</div>
+			</div>
+		</div>
+
+		<div class="jam-map" ng-if="profile.data.showOtb != 1">
+			<div ng-if="profile.data.premium_paket > 3">
+				<div class="jam-map-google tablet" ng-style="{'height' : profile.googleMapsStatic.height}">
+					<ion-spinner icon="dots" class="jam-loader" ng-if="profile.googleMapsStatic.url == ''"></ion-spinner>
+					<div ng-if="profile.googleMapsStatic.url != ''">
+						<img ng-src="{{profile.googleMapsStatic.url}}" height="{{profile.googleMapsStatic.height}}" width="100%" alt="Google Maps" title="Karte - {{profile.data.name_nice}}">
+					</div>
+					<div ng-if="profile.googleMapsStatic.url != ''" class="ion-location newPos rating-color-{{ profile.data.rateInt | number:0 }}"></div>
+				</div>
+				<button ng-click="profile.openGoogleMaps()" class="button button-block jam-next-page icon-right ion-map" ng-if="profile.data.showKbzMap">In Kartenapp anzeigen</button>
+			</div>
+			<div ng-if="profile.data.premium_paket <= 3">
+				<div class="ga-tablet-profile-01" ng-if="profile.data.showGa && profile.config.environment != 'app'">
+					<jam-ads style="width:300px;height:250px" data-ad-slot="4943971321"></jam-ads>
+				</div>
+				<div style="min-height:250px">
+					<div class="jam-map-google dummy tablet" id="profile-kbz-map-{{ ::profile.data.ref_id }}" style="height: 250px;">
+						<ion-spinner icon="dots" class="jam-loader" ng-if="profile.data.showKbzMapLoading"></ion-spinner>
+						<div class="kbz-map"></div>
+						<div class="ion-location rating-color-{{ profile.data.rateInt | number:0 }}" ng-if="profile.data.showKbzMap && !profile.data.showKbzMapLoading"></div>
+						<button class="button profile-toggle-kbz-map" ng-if="!profile.data.showKbzMap && !profile.data.showKbzMapLoading" ng-click="profile.toggleKbzMap(profile.data)">Karte anzeigen</button>
+					</div>
+					<button style="border-right: 1px solid #ddd;" ng-click="profile.openGoogleMaps()" class="button button-block jam-next-page icon-right ion-map" ng-if="profile.data.showKbzMap">In Kartenapp anzeigen</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</ion-content>

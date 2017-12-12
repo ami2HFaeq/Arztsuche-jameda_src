@@ -1,0 +1,18 @@
+<ion-view ng-controller="ExpertCategory as category" class="jam-category">
+
+	<ion-nav-title class="jam-category">
+		<div class="jam-title no-padding-right header-title">
+			{{ ::category.category.title }}
+		</div>
+		<a href="{{ ::category.config.urlPrefix }}/home/" class="button button-clear button-positive button-right btn-padding"><i class="icons ion-home"></i></a>
+	</ion-nav-title>
+
+	<div ng-if="category.config.deviceType != 'tablet' || category.config.deviceOrientation != 'landscape'">
+		<jam-expert-category template-type="jam-is-phone"></jam-expert-category>
+	</div>
+
+	<div ng-if="category.config.deviceType == 'tablet' && category.config.deviceOrientation == 'landscape'" class="jam-is-tablet">
+		<jam-expert-category template-type="jam-is-tablet"></jam-expert-category>
+	</div>
+
+</ion-view>

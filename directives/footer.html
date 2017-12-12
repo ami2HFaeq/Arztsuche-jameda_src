@@ -1,0 +1,12 @@
+<div class="jam-footer phone" ng-controller="Footer as footer" ng-class="{'white-footer': footer.curState == 'home' || footer.curState == 'searchByName'}">
+	<ul class="desktop-switch jam-toggle" ng-if="footer.showDesktopSwitch">
+		<li class="activated">Mobile Ansicht</li>
+		<li><a href="" id="jam-desktop-link" ng-click="footer.trackDesktopKlick();">Desktop Ansicht</a></li>
+	</ul>
+	<ul class="about">
+		<li><a ng-click="footer.changeState({url: 'uebersicht', lastState: footer.curState});">&Uuml;ber jameda&nbsp;|</a></li>
+		<li><a ng-click="footer.changeState({url: 'impressum', lastState: footer.curState});">&nbsp;Impressum&nbsp;</a></li>
+		<li><a ng-click="footer.changeState({url: 'datenschutz', lastState: footer.curState});">|&nbsp;Datenschutz</a></li>
+	</ul>
+	<div class="clearfix"></div>
+</div>

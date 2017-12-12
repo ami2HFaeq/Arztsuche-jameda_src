@@ -1,0 +1,17 @@
+<ion-view ng-controller="Profile as profile">
+
+	<ion-nav-title>
+		<div ng-if="!profile.showGoogleHeader()">Profil</div>
+		<div ng-if="profile.showGoogleHeader()" class="profile-header {{ ::profile.deviceType }}">
+			<div class="logo">
+				<div class="logo-claim">Deutschlands größte Arztempfehlung</div>
+			</div>
+		</div>
+		<a ng-if="!profile.config.userProfile.premium" href="{{ ::profile.config.urlPrefix }}/home/" ng-click="profile.trackHomeButton();" class="button button-clear button-positive button-right btn-padding"><i class="icons ion-home"></i></a>
+		<jam-login-button ng-if="profile.config.userProfile.premium"></jam-login-button>
+	</ion-nav-title>
+
+	<rich-snippet profile-data="profile.data"></rich-snippet>
+
+	<jam-default-template phone="app/profile/profile-phone" tablet="app/profile/profile-tablet"></jam-default-template>
+</ion-view>

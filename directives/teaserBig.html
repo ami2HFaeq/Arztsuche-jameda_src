@@ -1,0 +1,24 @@
+<div class="content-box-01 teaser-big" ng-repeat="teaser in teaserData.teaser.articles" ng-controller="TeaserBig as teaserController" ng-if="isTabletPortrait == false">
+	<h2 class="jam-h1" ng-click="teaserController.gotoArticle(teaser);">{{ teaserController.stringFormat(teaser.name) }}</h2>
+	<div ng-click="teaserController.gotoArticle(teaser);">
+		<div class="teaser-image" style="background-image: url('{{ teaser.img.src }}');"></div>
+		<div class="item item-icon-right item-text-wrap">
+			<div class="teaser-text">{{ teaser.teaser }}</div>
+			<i class="icon ion-chevron-right"></i>
+		</div>
+	</div>
+</div>
+<div class="content-box-01 teaser-big tablet-portrait" ng-class="{'small-images': config.deviceOrientation == 'landscape'}" ng-repeat="teaser in teaserData.teaser.articles" ng-controller="TeaserBig as teaserController" ng-if="isTabletPortrait == true">
+	<div ng-click="teaserController.gotoArticle(teaser);" style="float:left;">
+
+		<div class="teaser-image" style="background-image: url('{{ teaser.img.src }}');"></div>
+
+		<h2 class="jam-h1" ng-click="teaserController.gotoArticle(teaser);">{{ teaserController.stringFormat(teaser.name) }}</h2>
+
+		<div class="item item-icon-right item-text-wrap">
+			<div class="teaser-text">{{ teaser.teaser }}</div>
+			<i class="icon ion-chevron-right"></i>
+		</div>
+	</div>
+	<div style="clear:left;"></div>
+</div>

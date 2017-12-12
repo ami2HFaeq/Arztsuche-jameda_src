@@ -1,0 +1,20 @@
+<ion-view ng-controller="PageNotFound as pageNotFound" class="page-not-found" title="{{pageNotFound.pageTitle}}">
+	<ion-nav-title>
+		<strong ng-if="!pageNotFound.showGoogleHeader()">{{pageNotFound.pageTitle}}</strong>
+
+		<div ng-if="pageNotFound.showGoogleHeader()" class="profile-header jam-is-{{ config.deviceType }}">
+			<div class="logo">
+				<div class="logo-claim">Deutschlands größte Arztempfehlung</div>
+			</div>
+		</div>
+
+		<a ui-sref="userLogin" class="login-teaser" ng-if="pageNotFound.showButton">
+			<i class="icon ion-ios-contact-outline"></i>
+			<span>NEU</span>
+		</a>
+	</ion-nav-title>
+
+	<div ng-class="{'jam-is-tablet': config.deviceType == 'tablet' && config.deviceOrientation == 'landscape'}">
+		<jam-default-template phone="app/pageNotFound/pageNotFound-phone" tablet="app/pageNotFound/pageNotFound-tablet"></jam-default-template>
+	</div>
+</ion-view>

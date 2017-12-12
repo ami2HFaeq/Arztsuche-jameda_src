@@ -1,0 +1,25 @@
+<div class="mini-profile jam-is-tablet" ng-class="{autoHeight: showProfileDetails}">
+	<div class="portrait {{ portraitClass }} {{ data.spriteClass }}" ng-click="miniGoToProfile()">
+		<img ng-src="{{ data.portrait.pfad + '/medium/' + data.portrait.datei }}" ng-if="data.hasProfileImage" />
+	</div>
+	<div class="mini-profile-right-details">
+		<div class="left">
+			<h1 class="jam-h1 jam-ellipsis" ng-bind-html="profileHeader">{{ data.name_nice }}</h1>
+			<div class="light-font jam-h2 jam-ellipsis">{{ data.fachStringComplete }}</div>
+			<div ng-if="showProfileDetails">
+				<p>
+					{{ data.strasse }}<br />
+					{{ data.plz }} {{ data.ort }}
+				</p>
+				<p class="no-margin">
+					Tel.: {{ data.telephone }}
+				</p>
+			</div>
+		</div>
+		<div class="right" ng-if="showMiniProfileButtons">
+			<a class="button button-block icon-left ion-compose" ng-if="data.ist_bewertbar" ng-click="JamHelperFactory.goToReview($event, data, 'miniprofile-' + subType);">{{ data.rateTextLong }}</a>
+			<a ng-href="{{config.urlPrefix}}{{data.url}}uebersicht/{{data.url_hinten}}" class="button button-block icon-left ion-calendar" ng-if="data.showOtb == 1">Termin buchen</a>
+		</div>
+	</div>
+	<div class="clearfix"></div>
+</div>

@@ -1,0 +1,61 @@
+
+	<ion-content class="jam-content jam-page-premium-contents jam-is-tablet has-header" id="premium-contents-{{ ::data.ref_id }}_{{ ::data.art }}" scroll="false">
+
+
+		<jam-mini-profile template-type="jam-is-tablet" template-sub-type="premium-contents"></jam-mini-profile>
+
+
+		<div class="premium-contents-left">
+
+			<ion-scroll class="jam-is-phone jam-premium-contents-navi jam-profile">
+
+				<ul class="premium-contents-navi">
+					<li ng-repeat="subPage in data.premiumContents track by $index">
+						<a ng-click="showPremiumContent(data, subPage.sub_pfad)" ng-class="subPage.sub_pfad == sectionId ? 'active' : ''" class="button button-block jam-next-page icon-right ion-chevron-right jam-ellipsis" id="jam-premium-content-{{ ::subPage.sub_pfad }}-{{ ::data.ref_id }}_{{ ::data.art }}">{{ ::subPage.headline }}</a>
+					</li>
+				</ul>
+
+
+				<div ng-if="data.bilder" class="content-box-01 jam-gallery no-padding" id="premium-contents-gallery-small-{{ ::profile.data.ref_id }}_{{ ::profile.data.art }}">
+
+					<h2 class="jam-h2 box-header box-padding">Meine Praxisbilder</h2>
+					<ion-slide-box show-pager="true" ng-click="openModal()" on-slide-changed="slideChanged('small')" delegate-handle="profile-gallery-small">
+						<ion-slide ng-repeat="image in data.bilder">
+							<img ng-src="{{ ::image.pfad }}/big/{{ ::image.datei }}" width="{{ ::image.groessen.big.width }}" height="{{ ::image.groessen.big.height }}" />
+						</ion-slide>
+					</ion-slide-box>
+
+				</div>
+
+
+				<div ng-if="data.home_url" class="content-box-01 jam-doctor-website no-padding">
+
+					<h2 class="jam-h2 box-header box-padding">Meine Homepage</h2>
+					<button ng-click="JamHelperFactory.openDoctorWebsite(data.home_url, data, 'premium-contents')" class="button button-block jam-next-page icon-right ion-share">{{ ::data.home_url }}</button>
+
+				</div>
+
+				<jam-footer></jam-footer>
+
+			</ion-scroll>
+
+		</div>
+
+
+		<div class="premium-contents-right">
+
+			<div class="content-box-01">
+
+				<ion-scroll class="ion-scroll-border-fix jam-is-phone jam-premium-contents">
+
+						<div ng-bind-html="trustAsHtml(data.currentPremiumContents.content)"></div>
+
+						<div ng-bind-html="trustAsHtml(data.currentPremiumContents.styles)"></div>
+
+				</ion-scroll>
+
+			</div>
+
+		</div>
+
+	</ion-content>

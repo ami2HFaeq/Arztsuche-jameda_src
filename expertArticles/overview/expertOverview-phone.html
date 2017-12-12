@@ -1,0 +1,48 @@
+<ion-content class="jam-content expert-overview jam-category">
+
+	<jam-theme-page-bravi></jam-theme-page-bravi>
+
+	<div class="teaser-container box-container box-error" ng-if="!overview.loading && overview.showError">
+
+		<h3>Wir bitten um Entschuldigung</h3>
+		<p ng-bind-html="overview.errorMessage"></p>
+
+		<a class="button button-full " ng-click="overview.reload();">OK</a>
+	</div>
+
+	<div class="teaser-container box-container" ng-if="!overview.loading && !overview.showError && !overview.isTabletPortrait">
+
+		<h1>{{overview.data.title}}</h1>
+		<p class="light-font">{{overview.data.subTitle}}</p>
+
+		<ion-slide-box auto-play="true" does-continue="true">
+			<ion-slide class="teaser-item" ng-repeat="teaser in overview.data.teaser.main track by $index" ng-click="overview.goTo('expertCategory', {categoryId: teaser.url})">
+				<div class="teaser-image phone">
+					<img ng-src="{{teaser.img.src}}" alt="{{teaser.img.alt}}" title="{{teaser.img.title}}">
+					<p class="line-clamp">
+						{{teaser.titel}}
+						<span>{{teaser.img.title}}</span>
+						<i class="icon ion-chevron-right"></i>
+					</p>
+				</div>
+			</ion-slide>
+		</ion-slide-box>
+	</div>
+
+	<div class="teaser-container box-container" ng-if="!overview.loading && !overview.showError && overview.isTabletPortrait">
+		<div>
+			<h1>{{overview.data.title}}</h1>
+			<p class="light-font">{{overview.data.subTitle}}</p>
+		</div>
+	</div>
+
+	<jam-teaser-big teaser-data="overview.data" ng-if="!overview.loading && !overview.showError"></jam-teaser-big>
+
+	<jam-teaser-small teaser-data="overview.data" ng-if="!overview.loading && !overview.showError"></jam-teaser-small>
+
+	<div class="loadmore" ng-if="overview.data.nextPage != false && !overview.loading && !overview.hideMore && !overview.showError">
+		<button class="button button-full jam-icon-telephone" ng-click="overview.loadMoreArticles(overview.data.nextPage)">Weitere Artikel anzeigen <i class="icons ion-chevron-down"></i></button>
+	</div>
+
+	<jam-footer></jam-footer>
+</ion-content>

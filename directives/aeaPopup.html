@@ -1,0 +1,31 @@
+<table>
+    <tr>
+        <td class="head">Empfehlungen</td>
+        <td class="head">Fachrichtung</td>
+    </tr>
+    <tr ng-if="data.sSubject >= 0">
+        <td><span class="count">{{data.sSubject}}</span></td>
+        <td><span class="name">Arzt selber Fachrichtung</span></td>
+    </tr>
+    <tr ng-if="data.sSubject >= 0">
+        <td><span class="count">{{data.otherDocs}}</span></td>
+        <td><span class="name">Arzt anderer Fachrichtung</span></td>
+    </tr>
+    <tr ng-if="data.sSubject ==undefined">
+        <td><span class="count">{{data.allDocs}}</span></td>
+        <td><span class="name">Arzt</span></td>
+    </tr>
+
+    <tr>
+        <td><span class="count">{{data.otherHealer}}</span></td>
+        <td><span class="name">Andere Heilberufler</span></td>
+    </tr>
+    <tr>
+        <td><span class="count">{{data.allInst}}</span></td>
+        <td><span class="name">Institution</span></td>
+    </tr>
+</table>
+<br>
+<hr>
+<h2>Was ist eine Kollegenempfehlung?</h2>
+Jeder registrierte Arzt oder andere Heilberufler hat unabhängig von seinem Fachgebiet die Möglichkeit einen Kollegen zu empfehlen. Der empfohlene Kollege erfährt dabei nicht, von wem er empfohlen wurde. Jeder Arzt kann einen anderen Arzt nur einmal empfehlen.

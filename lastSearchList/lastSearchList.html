@@ -1,0 +1,36 @@
+<ion-view ng-controller="LastSearchList as lastSearchList"
+		  title="{{ lastSearchList.pageTitle }}"
+		  class="search-results"
+		  hide-nav-bar="false">
+
+	<ion-nav-title>
+
+		<div ng-if="!lastSearchList.showGoogleHeader()"
+			 class="profile-header {{ lastSearchList.config.deviceType }}">
+			{{ lastSearchList.pageTitle }} <span ng-if="favourites.favCount > 0">({{lastSearchList.favCount}})</span>
+		</div>
+
+		<div ng-if="lastSearchList.showGoogleHeader()"
+			 class="profile-header {{ lastSearchList.config.deviceType }}">
+			<div class="logo">
+				<div ng-if="lastSearchList.config.deviceType == 'tablet'"
+					 class="logo-claim">Deutschlands größte Arztempfehlung
+				</div>
+			</div>
+		</div>
+		<button class="button button-clear button-positive button-right btn-padding"
+				ng-class="{'active': lastSearchList.showDelete}"
+				ng-click="lastSearchList.clearCache()">
+			<i class="icons ion-ios-trash"></i>
+		</button>
+	</ion-nav-title>
+
+	<div ng-if="lastSearchList.config.deviceType != 'tablet' || lastSearchList.config.deviceOrientation != 'landscape'">
+		<jam-last-search-list template-type="jam-is-phone"></jam-last-search-list>
+	</div>
+
+	<div ng-if="lastSearchList.config.deviceType == 'tablet' && lastSearchList.config.deviceOrientation == 'landscape'">
+		<jam-last-search-list template-type="jam-is-tablet"></jam-last-search-list>
+	</div>
+
+</ion-view>

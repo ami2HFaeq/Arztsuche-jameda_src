@@ -1,0 +1,14 @@
+<ion-view ng-controller="SearchResultList as searchResults"
+		  class="search-results"
+		  title="{{ searchResults.pageTitle }}">
+	<ion-nav-title>
+		<div class="jam-title no-padding-right">
+			{{ searchResults.titleWhat }} {{ searchResults.titleNumFound }}
+			<span>{{ searchResults.titleWhere }}</span>
+		</div>
+	</ion-nav-title>
+
+	<div ng-class="{'jam-is-phone': config.deviceType != 'tablet' || config.deviceOrientation != 'landscape', 'jam-is-tablet': config.deviceType == 'tablet' && config.deviceOrientation == 'landscape'}">
+		<jam-default-template phone="app/searchResultList/searchResultList-phone" tablet="app/searchResultList/searchResultList-tablet"></jam-default-template>
+	</div>
+</ion-view>

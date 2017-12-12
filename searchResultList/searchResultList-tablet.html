@@ -1,0 +1,579 @@
+<div class="col-60" ng-if="!searchResults.showMaps">
+	<form name="suggestForm" action="#" ng-submit="searchResults.onSubmit(suggestForm)">
+	<ion-header-bar class="bar bar-subheader item-input-inset tablet"
+					ng-class="{ 'position-top': (searchResults.showWhatCancel || searchResults.showWhereCancel) }"
+					id="jam-search-subheader" scroll="false">
+
+		<ion-input class="item-input-wrapper"
+		   ng-class="{ 'jam-search-label-left': !searchResults.showWhatCancel, 'jam-search-label': searchResults.showWhatCancel }"
+		   ng-if="searchResults.showWhatInputField"
+		   id="what-label">
+			<i class="icon ion-ios-search-strong"
+			   ng-if="searchResults.showWhatInputField && searchResults.showWhereInputField"></i>
+			<input type="search"
+			   placeholder="z.B. Zahnarzt oder Dr. Müller"
+			   ng-click="$event.preventDefault();searchResults.controlInputFieldPosition('what');"
+				name="search-who"
+			   ng-change="searchResults.getSuggestData('what')"
+			   ng-model="searchResults.searchInput.what"
+			   ng-class="{'jam-bar-header-input': searchResults.showWhatCancel}"
+			   autocapitalize="off"
+			   autocorrect="off"
+			   autocomplete="off"
+			   id="what-input"
+			   ng-if="searchResults.showWhatInputField"
+			   ng-keyup="searchResults.checkKey('what')">
+		</ion-input>
+
+		<button ng-if="searchResults.showWhatCancel && searchResults.searchInput.what"
+			class="input-button button button-icon ion-ios-close-outline jam-clear-button"
+			data-tap-disabled="true"
+			on-touch="searchResults.clearTextInput('what')">
+		</button>
+
+		<button type="button" class="button button-clear jam-cancel-button"
+			ng-click="searchResults.controlInputFieldPosition('cancelWhat')"
+			ng-if="searchResults.showWhatCancel">
+			Abbrechen
+		</button>
+
+		<ion-input class="item-input-wrapper"
+			   ng-if="searchResults.showWhereInputField">
+			<i class="icon ion-ios-search-strong"
+			   ng-if="searchResults.showWhatInputField && searchResults.showWhereInputField"></i>
+
+			<input type="search"
+			   placeholder="z.B. München oder PLZ"
+			   ng-click="$event.preventDefault();searchResults.controlInputFieldPosition('where')"
+				   name="search-where"
+			   ng-change="searchResults.getSuggestData('where')"
+			   ng-model="searchResults.searchInput.where"
+			   ng-class="{'jam-bar-header-input': searchResults.showWhereCancel}"
+			   autocapitalize="off"
+			   autocorrect="off"
+			   autocomplete="off"
+			   id="where-input"
+			   ng-if="searchResults.showWhereInputField"
+			   ng-keyup="searchResults.checkKey('where')">
+		</ion-input>
+
+		<button ng-if="searchResults.showWhereCancel && searchResults.searchInput.where"
+			class="input-button button button-icon ion-ios-close-outline jam-clear-button"
+			data-tap-disabled="true"
+			on-touch="searchResults.clearTextInput('where')">
+		</button>
+
+		<button type="button" class="button button-clear jam-cancel-button"
+			ng-click="searchResults.controlInputFieldPosition('cancelWhere')"
+			ng-if="searchResults.showWhereCancel">
+			Abbrechen
+		</button>
+	</ion-header-bar>
+	</form>
+	<ion-content class="jam-content" ng-class="{'position-top': (searchResults.showWhatCancel || searchResults.showWhereCancel)}" id="jam-list-content" delegate-handle="contentScroller" on-scroll="searchResults.getScrollPosition()" scroll-event-interval="5" scroll="true">
+	<div class="empty-search-results" ng-if="searchResults.isDataResultEmpty && !(searchResults.showWhereSuggest || searchResults.showWhatSuggest)">
+		Es wurden keine Einträge gefunden. Bitte verändern Sie Ihre Suche.
+	</div>
+	<div class="jam-search-results-list" ng-if="searchResults.searchResultsData && !(searchResults.showWhereSuggest || searchResults.showWhatSuggest)">
+		<div class="search-result-list list content-box-blue" ng-if="searchResults.searchResultsDataComplete.suche.expand_msg.length > 0">
+			<span class="ion-information-circled"></span>
+			<p ng-bind-html="searchResults.searchResultsDataComplete.suche.expand_msg"></p>
+		</div>
+
+		<div class="list list-content" ng-if="searchResults.searchResultsDataComplete.TPF != null && searchResults.showTPFTPK" ng-repeat="tpfItem in searchResults.searchResultsDataComplete.TPF.results">
+			<div class="item item-thumbnail-left item-tpf">
+
+				<div class="portrait portrait-medium portrait-{{ ::tpfItem.portrait.sprite }}" ng-click="searchResults.goToProfile(tpfItem, $event, 'tpf')">
+					<img ng-src="{{ ::searchResults.jamHelper.replaceHttp(tpfItem.portrait.pfad) }}/medium/{{ ::tpfItem.portrait.datei }}" ng-if="(tpfItem.portrait && !tpfItem.portrait.sprite)" width="76" height="101">
+				</div>
+
+				<h2 class="jam-ellipsis tablet" ng-click="searchResults.goToProfile(tpfItem, $event, 'tpf')">{{ tpfItem.name_nice }}</h2>
+
+				<div class="profile-info" ng-if="searchResults.isTablet">
+
+					<p ng-click="searchResults.goToProfile(tpfItem, $event, 'tpf')">
+						{{ ::tpfItem.strasse }}<br />
+						{{ ::tpfItem.plz }} {{ ::tpfItem.ort }}<br>
+						Tel. {{ ::tpfItem.tel }}<br>
+					</p>
+					<p><a class="linkMargin" href="http://{{ ::tpfItem.home_url }}" target="config.urlTarget"><strong>{{ ::tpfItem.home_url }}</strong></a></p>
+				</div>
+
+				<div class="priorities" ng-click="searchResults.goToProfile(tpfItem, $event, 'tpf')">
+					<span>Behandlungsschwerpunkte:</span>
+					<ul >
+						<li ng-repeat="priorities in tpfItem.schwerpunkte"><i class="icons ion-plus-circled"></i>{{::priorities}}</li>
+					</ul>
+				</div>
+
+				<div class="premiumHint" ng-click="searchResults.goToProfile(tpfItem, $event, 'tpf')">
+					Anzeige
+				</div>
+			</div>
+		</div>
+
+		<div class="list list-content" ng-if="searchResults.searchResultsDataComplete.TPK != null && searchResults.showTPFTPK" ng-repeat="tpkItem in searchResults.searchResultsDataComplete.TPK.results">
+			<div class="item item-thumbnail-left item-tpk" ng-click="searchResults.goToProfile(tpkItem, $event, 'tpk')">
+
+				<div class="portrait portrait-medium portrait-{{ ::tpkItem.portrait.sprite }}">
+					<img ng-src="{{ ::searchResults.jamHelper.replaceHttp(tpkItem.portrait.pfad) }}/medium/{{ ::tpkItem.portrait.datei }}" ng-if="(tpkItem.portrait && !tpkItem.portrait.sprite)" width="76" height="101">
+				</div>
+
+				<!--<div class="rating rating-{{ ::searchResults.getRatingNumber(tpkItem.gesamt_note) | number:0 }}"-->
+					 <!--ng-if="tpkItem.gesamt_note >= 0">-->
+					<!--<h3 class="jam-h3">Note</h3>-->
+					<!--<div class="rating-value">{{ ::searchResults.createFloat(tpkItem.gesamt_note) }}</div>-->
+				<!--</div>-->
+
+				<div class="profile-info bigger" ng-if="searchResults.isTablet">
+					<h2 class="jam-ellipsis">{{ ::tpkItem.name_nice }}</h2>
+					<p>
+						{{ ::tpkItem.strasse }}<br />
+						{{ ::tpkItem.plz }} {{ ::tpkItem.ort }}<br>
+
+						<a class="linkMargin" href="{{ ::tpkItem.home_url }}" ><strong>{{ ::tpkItem.home_url }}</strong></a>
+					</p>
+				</div>
+
+				<h2 ng-if="!searchResults.isTablet">{{ ::tpkItem.name_nice }}</h2>
+				<p ng-if="!searchResults.isTablet">
+					{{ ::tpkItem.strasse }}<br />
+					{{ ::tpkItem.plz }} {{ ::tpkItem.ort }}<br>
+				</p>
+
+				<p class="distance-no-margin"
+				   ng-if="tpkItem.entfernung && tpkItem.otb_status && tpkItem.otb_status == 1">
+					{{ ::searchResults.createFloat(tpkItem.entfernung,'0') }} km entfernt
+				</p>
+
+				<p class="distance"
+				   ng-if="tpkItem.entfernung && !(tpkItem.otb_status && tpkItem.otb_status == 1)">
+					{{ ::searchResults.createFloat(tpkItem.entfernung,'0') }} km entfernt
+				</p>
+
+				<div class="right"
+					 ng-class="{otb: (tpkItem.otb_status && tpkItem.otb_status == 1), 'no-distance': !tpkItem.entfernung}">
+					<div ng-if="tpkItem.bewertungen">
+							<span class="reviews">
+								{{ ::tpkItem.bewertungen }}
+								<span class="ion-ios-chatbubble"></span>
+							</span>
+					</div>
+					<div ng-if="tpkItem.empfehl_quote && tpkItem.empfehl_quote > 0">
+							<span class="recomendations">
+								{{ ::searchResults.roundAndPercent(tpkItem.empfehl_quote) }}%
+								<span class="ion-ios-heart-outline"></span>
+							</span>
+					</div>
+				</div>
+
+				<div class="premiumHint">
+					Anzeige
+				</div>
+			</div>
+		</div>
+
+		<!-- default profile-list -->
+		<ion-list>
+		<div class="list-container" ng-repeat="listItem in searchResults.searchResultsData track by $index">
+
+			<div class="list list-content">
+				<div class="item item-thumbnail-left"
+
+				   ng-click="searchResults.goToProfile(listItem, $event, 'list')">
+					<div class="portrait portrait-medium portrait-{{ listItem.portrait.sprite }}" ng-class="{'portrait-mann': !listItem.portrait.sprite}">
+						<img ng-src="{{ listItem.portrait.pfad }}/medium/{{ listItem.portrait.datei }}" ng-if="(listItem.portrait && !listItem.portrait.sprite)" width="76" height="101">
+						<!--<div class="loadSliderImage" jam-src="{{ listItem.portrait.pfad }}/medium/{{ listItem.portrait.datei }}" width="76" height="101" ng-if="(listItem.portrait && !listItem.portrait.sprite) && (($index > 8) && (searchResults.searchResultsData.length < 31))"></div>-->
+						<div class="fav" ng-class="{'show': searchResults.jamHelper.isFavourite(listItem.ref_id,listItem.art)}"><i class="icons ion-android-star"></i></div>
+					</div>
+
+					<div class="rating rating-{{ searchResults.getRatingNumber(listItem.gesamt_note) | number:0 }}"
+						 ng-if="listItem.gesamt_note >= 0">
+						<h3 class="jam-h3">Note</h3>
+						<div class="rating-value">{{ searchResults.createFloat(listItem.gesamt_note) }}</div>
+					</div>
+					<div class="rating rating-0"
+						 ng-if="listItem.ist_bewertbar != false && !listItem.gesamt_note">
+						<h3 class="jam-h3">Note</h3>
+						<div class="rating-value">-</div>
+					</div>
+
+					<div style="padding-left: 86px;">
+						<h2>{{ listItem.name_nice }}</h2>
+						<p class="light-font fachString" ng-if="searchResults.showFach && listItem.fachStringComplete.length > 0"><small>{{ listItem.fachStringComplete }}</small></p>
+						<p class="light-font fachString" ng-if="searchResults.showFach && listItem.fachStringComplete.length <= 0"><small>{{ listItem.fach_string[0] }}</small></p>
+
+						<p class="maxWidth">
+							{{ listItem.strasse }}<br />
+							{{ listItem.plz }} {{ listItem.ort }}
+							<span class="distance" ng-if="listItem.multi_eintrag"><br>(Weitere Standorte)</span>
+						</p>
+						<p class="distance-no-margin"
+						   ng-if="listItem.entfernung && (listItem.otb_status && listItem.otb_status == 1) && !searchResults.showFach">
+							{{ searchResults.createFloat(listItem.entfernung) }} km entfernt
+						</p>
+						<p ng-class="{'distance-no-margin': listItem.multi_eintrag, 'distance': !listItem.multi_eintrag}"
+						   ng-if="listItem.entfernung && !(listItem.otb_status && listItem.otb_status == 1) && !searchResults.showFach">
+							{{ searchResults.createFloat(listItem.entfernung) }} km entfernt
+						</p>
+						<p class="distance-no-margin"
+						   ng-if="listItem.entfernung && searchResults.showFach">
+							{{ searchResults.createFloat(listItem.entfernung) }} km entfernt
+						</p>
+						<button class="button otb-button"
+								ng-if="listItem.otb_status && listItem.otb_status == 1">
+							Termin buchen
+						</button>
+						<div class="right"
+							 ng-class="{otb: (listItem.otb_status && listItem.otb_status == 1), 'no-distance': !listItem.entfernung}">
+							<div ng-if="listItem.bewertungen">
+								<span class="reviews">
+									{{ listItem.bewertungen }}
+									<span class="ion-ios-chatbubble"></span>
+								</span>
+							</div>
+							<div ng-if="!listItem.bewertungen" ng-class="{'op': !listItem.ist_bewertbar}">
+								<span class="reviews" >
+									0
+									<span class="ion-ios-chatbubble"></span>
+								</span>
+							</div>
+							<div ng-if="listItem.empfehl_quote">
+								<span class="recomendations">
+									{{ searchResults.roundAndPercent(listItem.empfehl_quote) }}%
+									<span class="ion-ios-heart-outline"></span>
+								</span>
+							</div>
+							<div ng-if="!listItem.empfehl_quote" ng-class="{'op': !listItem.ist_bewertbar}">
+								<span class="recomendations">
+									0%
+									<span class="ion-ios-heart-outline"></span>
+								</span>
+							</div>
+
+
+						</div>
+
+						<div class="reviewButton" ng-class="{'toBottom': searchResults.showFach}" ng-if="listItem.ist_bewertbar">
+							<button ng-click="searchResults.goToReview(listItem, $event)" class="button button-block">
+								{{listItem.rateText}}
+							</button>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+
+			<div class="jam-adsense" ng-if="($index == 1 || $index == 14) && searchResults.searchResultsDataComplete.suche.filter != null && searchResults.searchResultsDataComplete.suche.params.gruppe && searchResults.searchResultsDataComplete.suche.params.gruppe != 'HA' && searchResults.searchResultsDataComplete.suche.params.gruppe != 'ZA' && searchResults.searchResultsDataComplete.suche.params.gruppe != 'HA' && searchResults.searchResultsDataComplete.suche.params.gruppe != 'HA_ZA' && searchResults.config.environment != 'app'">
+				<jam-ads data-ad-slot="1603916526" data-ad-format="horizontal"></jam-ads>
+			</div>
+		</div>
+
+
+		</ion-list>
+		<div style="opacity: 0;" ng-if="searchResults.searchResultsDataComplete.suche.numFound <= 30">jameda</div>
+
+		<div class="loadmore tablet" ng-if="searchResults.searchResultsDataComplete.suche.numFound > 30 && !searchResults.showMaxListItemsMessage">
+			<button class="button button-full jam-icon-telephone" ng-class="{'disabled': searchResults.disableLoadMore}" ng-click="searchResults.loadMoreResults()">Weitere anzeigen <i class="icons ion-chevron-down"></i></button>
+		</div>
+
+		<div class="max-loaded-items tablet" ng-if="searchResults.showMaxListItemsMessage">
+			<h2>Sie haben den passenden Arzt für sich<br>noch nicht gefunden?</h2>
+			<p>Bitte verfeinern Sie Ihre Suche durch z.B. die Filter oder den Standort um eine genauere Liste mit Ärzten zu erhalten.</p>
+
+			<button class="button button-full jam-icon-telephone" ng-click="searchResults.listScrollTop()">Zur Suche nach oben <i class="icons ion-chevron-up"></i></button>
+		</div>
+
+		<div class="belowTheFold" ng-if="!searchResults.showMaps && searchResults.searchResultsDataComplete.seoBelowText" ng-compile-bind-html="searchResults.searchResultsDataComplete.seoBelowText"></div>
+	</div>
+
+
+</ion-content>
+
+	<div class="jam-suggest tablet"
+	 ng-if="searchResults.showWhereSuggest || searchResults.showWhatSuggest">
+	<ion-scroll delegate-handle="suggest"
+				on-scroll="searchResults.removeFocusFromInput()"
+				id="suggest-scroll-area">
+		<!--Was-Wen Suggest-->
+		<div ng-if="searchResults.searchInput.what && searchResults.showWhatSuggest"
+			 ng-repeat="whatResult in searchResults.searchInput.results"
+			 ng-class="{ 'jam-suggest-box-tablet': searchResults.isTablet, 'margin-aside': searchResults.isTablet, 'jam-suggest-box': !searchResults.isTablet }">
+			<div class="item-divider">
+				{{ ::whatResult.header }}
+			</div>
+			<div class="card">
+				<a class="item suggest-term item-icon-left item-icon-right"
+
+				   ng-if="whatResult.header == 'Namen'"
+				   ng-click="searchResults.setChosenSuggestItem({ searchType: 'what', inputItem: searchResults.searchInput.what, selectedItem: searchResults.searchInput.what, gruppe_fach_param: suggestItem.select, deeplink: suggestItem.deeplink, stateGo: true })">
+					<i class="icon ion-ios-search-strong"></i>
+					<span class="jam-suggest-item-text">Nach&nbsp;</span>
+					"{{ ::searchResults.searchInput.what }}"
+					<span class="jam-suggest-item-text">suchen</span>
+					<i class="icon ion-chevron-right"></i>
+				</a>
+				<a class="item suggest-term item-icon-right"
+
+				   ng-repeat="whatSuggestItem in whatResult.list"
+				   ng-click="searchResults.setChosenSuggestItem({ searchType: 'what', inputItem: searchResults.searchInput.what, selectedItem: whatSuggestItem.term, gruppe_fach_param: whatSuggestItem.select, deeplink: whatSuggestItem.deeplink, multi: whatSuggestItem.multiEntry, type: whatSuggestItem.type })">
+					{{ ::whatSuggestItem.term }} <span class="jam-suggest-item-text">{{ ::whatSuggestItem.info }}</span>
+					<i class="icon ion-chevron-right"></i>
+				</a>
+			</div>
+		</div>
+		<!--/Was-Wen Suggest-->
+
+		<!--Static Was-Wen-Suggest-->
+		<div ng-if="!searchResults.searchInput.what && searchResults.showWhatInputField && !searchResults.showWhereInputField" ng-class="{ 'jam-suggest-box-tablet': searchResults.isTablet, 'margin-aside': searchResults.isTablet, 'jam-suggest-box': !searchResults.isTablet }">
+			<div class="card jam-suggest-first-item">
+				<a class="item suggest-term item-icon-left item-icon-right" ng-click="searchResults.goToSubjects()">
+					<i class="icon ion-ios-paper-outline"></i>
+					Liste aller Fachgebiete (70)
+					<i class="icon ion-chevron-right"></i>
+				</a>
+			</div>
+			<div class="item-divider" ng-if="!searchResults.lastSearchWhatSuggest">
+				Häufig gesuchte Fachgebiete
+			</div>
+			<div class="card" ng-if="!searchResults.lastSearchWhatSuggest">
+				<a class="item suggest-term item-icon-right item-text-wrap" ng-click="searchResults.setChosenSuggestItem({ searchType: 'what', inputItem: subjectObj.inputItem, selectedItem: subjectObj.selectedItem, gruppe_fach_param: subjectObj.gruppe_fach_param })" ng-repeat="subjectObj in searchResults.mostSearchedSubjects">
+					{{::subjectObj.inputItem}}
+					<i class="icon ion-chevron-right"></i>
+				</a>
+			</div>
+			<div class="item-divider" ng-if="searchResults.lastSearchWhatSuggest"></div>
+			<div class="card" ng-if="searchResults.lastSearchWhatSuggest">
+				<a class="item suggest-term item-icon-right item-text-wrap" ng-click="searchResults.setChosenSuggestItem({ searchType: 'whatSearchFromCache', objFromCache: lastSearchWhat })" ng-repeat="lastSearchWhat in searchResults.lastSearchWhatSuggest">
+					{{ ::lastSearchWhat.what_name_nice.what }}
+					{{ ::lastSearchWhat.what_name_nice.name_nice }}
+									<span class="jam-suggest-item-text" ng-if="::lastSearchWhat.what_name_nice.address">
+										{{ ::lastSearchWhat.what_name_nice.address }}
+									</span>
+					<i class="icon ion-chevron-right"></i>
+				</a>
+			</div>
+		</div>
+		<!--/Static Was-Wen-Suggest-->
+
+		<!--Wo Suggest-->
+		<div class="card jam-suggest-first-item" ng-if="searchResults.rangeStyle == 'select' && searchResults.showSlider && (searchResults.searchInput.where && searchResults.showWhereSuggest)">
+			<div class="jam-dist-slider jam-dist-slider-select" ng-if="searchResults.showWhereCancel && searchResults.searchInput.where">
+                <label class="item-input item-select" for="distanceSearchSuggest">
+                    <div class="input-label jam-label-text jam-top-margin">
+                        Umkreis
+                    </div>
+                    <select name="distanceSearchSuggest" id="distanceSearchSuggest" ng-change="searchResults.sliderChanged(); searchResults.setChosenSuggestItem({ searchType: 'where', inputItem: searchResults.searchInput.where, selectedItem: whereSuggestItem.term, geo_param: whereSuggestItem.select })" ng-model="searchResults.distSlider" ng-options="distOption as distOption.name for distOption in searchResults.sliderOptions">
+                    </select>
+                </label>
+			</div>
+
+			<div class="jam-dist-slider" ng-if="!searchResults.showWhereCancel || searchResults.searchInput.where.length == 0 || !searchResults.searchInput.where" ng-click="searchResults.getCurrentGeoPosition()">
+				<div class="item">
+					Aktuelle Position verwenden
+				</div>
+			</div>
+			<a class="item jam-dist-current-position item-icon-right" ng-class="{'lower': !searchResults.showWhereCancel || searchResults.searchInput.where.length == 0 || !searchResults.searchInput.where}" ng-click="searchResults.getCurrentGeoPosition()">
+				<i class="icon ion-ios-navigate-outline" ng-class="{ 'ion-ios-navigate-outline-active': searchResults.geoPos }"></i>
+			</a>
+		</div>
+
+		<div class="card jam-suggest-first-item" ng-if="searchResults.rangeStyle == 'slider' && searchResults.showSlider && (searchResults.searchInput.where && searchResults.showWhereSuggest)">
+			<div class="jam-dist-slider" ng-if="searchResults.showWhereCancel && searchResults.searchInput.where">
+				<div class="item range">
+					<input type="range" name="distance" min="0" max="70" value="30" ng-model="searchResults.distSlider"
+						   ng-change="searchResults.sliderChanged()" on-release="searchResults.setChosenSuggestItem({ searchType: 'where', inputItem: searchResults.searchInput.where, selectedItem: '', geo_param: '', fromDistSlider: true })">
+					<div class="jam-distance" ng-if="searchResults.searchInput.dist == 0.5">
+						{{ searchResults.searchInput.dist * 1000 }} {{ searchResults.distSliderUnit }}
+					</div>
+					<div class="jam-distance" ng-if="searchResults.searchInput.dist != 0.5">
+						{{ searchResults.searchInput.dist }} {{ searchResults.distSliderUnit }}
+					</div>
+				</div>
+			</div>
+
+			<div class="jam-dist-slider" ng-if="!searchResults.showWhereCancel || searchResults.searchInput.where.length == 0 || !searchResults.searchInput.where" ng-click="searchResults.getCurrentGeoPosition()">
+				<div class="item">
+					Aktuelle Position verwenden
+				</div>
+			</div>
+
+			<a class="item jam-dist-current-position item-icon-right" ng-class="{'lower': !searchResults.showWhereCancel || searchResults.searchInput.where.length == 0 || !searchResults.searchInput.where}" ng-click="searchResults.getCurrentGeoPosition()">
+				<i class="icon ion-ios-navigate-outline" ng-class="{ 'ion-ios-navigate-outline-active': searchResults.geoPos }"></i>
+			</a>
+		</div>
+
+		<div ng-if="searchResults.searchInput.where && searchResults.showWhereSuggest"
+			 ng-repeat="whereResult in searchResults.searchInput.results"
+			 ng-class="{ 'jam-suggest-box': !searchResults.isTablet }">
+			<div class="item-divider"
+				 ng-if="whereResult.header != 'Ort'">
+				{{ ::whereResult.header }}
+			</div>
+			<div class="card">
+				<a class="item suggest-term item-icon-right"
+				   ng-repeat="whereSuggestItem in whereResult.list"
+				   ng-click="searchResults.setChosenSuggestItem({ searchType: 'where', inputItem: searchResults.searchInput.where, selectedItem: whereSuggestItem.term, geo_param: whereSuggestItem.select })">
+					{{ ::whereSuggestItem.term }}
+					<i class="icon ion-chevron-right"></i>
+				</a>
+			</div>
+		</div>
+		<!--/Wo Suggest-->
+
+		<!--Static Wo-Suggest-->
+		<div ng-if="!searchResults.searchInput.where && searchResults.showWhereInputField && !searchResults.showWhatInputField"
+			 ng-class="{ 'jam-suggest-box-tablet': searchResults.isTablet, 'margin-aside': searchResults.isTablet, 'jam-suggest-box': !searchResults.isTablet }">
+			<div class="card jam-suggest-first-item">
+				<div class="jam-dist-slider" ng-if="searchResults.showWhereCancel && searchResults.searchInput.where">
+					<div class="item range">
+						<input type="range"
+							   name="distance"
+							   min="0"
+							   max="70"
+							   value="30"
+							   ng-model="searchResults.distSlider"
+							   ng-change="searchResults.sliderChanged()"
+							   on-release="searchResults.setChosenSuggestItem({ searchType: 'where', inputItem: searchResults.searchInput.where, selectedItem: '', geo_param: '', fromDistSlider: true })">
+						<div class="jam-distance"
+							 ng-if="searchResults.searchInput.dist == 0.5">
+							{{ searchResults.searchInput.dist * 1000 }} {{ searchResults.distSliderUnit }}
+						</div>
+						<div class="jam-distance"
+							 ng-if="searchResults.searchInput.dist != 0.5">
+							{{ searchResults.searchInput.dist }} {{ searchResults.distSliderUnit }}
+						</div>
+					</div>
+				</div>
+
+				<div class="jam-dist-slider" ng-if="!searchResults.showWhereCancel || searchResults.searchInput.where.length == 0 || !searchResults.searchInput.where" ng-click="searchResults.getCurrentGeoPosition()">
+					<div class="item">
+						Aktuelle Position verwenden
+					</div>
+				</div>
+
+				<a class="item jam-dist-current-position item-icon-right"
+				   ng-class="{'lower': !searchResults.showWhereCancel || searchResults.searchInput.where.length == 0 || !searchResults.searchInput.where}"
+				   ng-click="searchResults.getCurrentGeoPosition()">
+					<i class="icon ion-ios-navigate-outline"
+					   ng-class="{ 'ion-ios-navigate-outline-active': searchResults.geoPos }"></i>
+				</a>
+			</div>
+			<div class="item-divider"
+				 ng-if="!searchResults.lastSearchWhereSuggest">
+				Häufig gesuchte Orte
+			</div>
+			<div class="card"
+				 ng-if="!searchResults.lastSearchWhereSuggest">
+				<a class="item suggest-term item-icon-right item-text-wrap"
+
+				   ng-click="searchResults.setChosenSuggestItem({ searchType: 'where', inputItem: cityObj.city, selectedItem: cityObj.city, geo_param: cityObj.geo_param })"
+				   ng-repeat="cityObj in searchResults.mostSearchedCities">
+					{{ ::cityObj.city }}
+					<i class="icon ion-chevron-right"></i>
+				</a>
+			</div>
+			<div class="item-divider"
+				 ng-if="searchResults.lastSearchWhereSuggest">
+			</div>
+			<div class="card"
+				 ng-if="searchResults.lastSearchWhereSuggest">
+				<a class="item suggest-term item-icon-right item-text-wrap"
+
+				   ng-click="searchResults.setChosenSuggestItem({ searchType: 'whereSearchFromCache', objFromCache: lastSearchWhere })"
+				   ng-repeat="lastSearchWhere in searchResults.lastSearchWhereSuggest">
+					{{ ::lastSearchWhere.stateParams.address }}
+					<i class="icon ion-chevron-right"></i>
+				</a>
+			</div>
+		</div>
+		<!--/Static Wo-Suggest-->
+	</ion-scroll>
+</div>
+</div>
+
+<!-- MAP -->
+<div class="col-60" ng-if="searchResults.showMaps">
+
+	<ion-content class="jam-content position-top">
+
+		<!-- Google Maps -->
+		<div class="jam-map-container" ng-if="searchResults.showMaps">
+
+		</div>
+
+		<div class="jam-map-location" ng-if="searchResults.showMaps && !searchResults.showMapReload" ng-click="searchResults.geoLocationMap()">
+			<i class="icons ion-ios-navigate-outline"></i>
+		</div>
+
+		<div class="jam-map-changed" ng-if="searchResults.showMaps && searchResults.showMapReload">
+			<button class="button" ng-click="searchResults.updateMap(true, 'click')"><i class="icons ion-refresh"></i>In diesem Bereich suchen</button>
+		</div>
+
+		<!-- / Google Maps -->
+	</ion-content>
+
+</div>
+
+<div class="col-40" ng-class="{ top: !searchResults.showMaps }">
+	<ion-scroll ng-class="{'padding-top': searchResults.showMaps}">
+		<!-- Toggle Map / List -->
+		<div class="row jam-toggle-box">
+			<div class="col jam-toggle-left" id="review-recommend-yes" ng-class="{'selected': !searchResults.showMaps}" ng-click="searchResults.toggleMap(false)"><span class="ion-android-radio-button-on"></span><span class="ion-ios-circle-outline"></span>Liste</div>
+			<div class="col jam-toggle-right" id="review-recommend-no" ng-class="{'selected': searchResults.showMaps}" ng-click="searchResults.toggleMap(true)"><span class="ion-ios-circle-outline"></span><span class="ion-android-radio-button-on"></span>Karte</div>
+		</div>
+
+		<div class="jam-modal" ng-if="searchResults.filter.length > 0">
+			<h2>Sortieren</h2>
+			<select class="jam-select" name="sortItems" ng-model="searchResults.sortValue" ng-change="searchResults.selectedSorting()" ng-options="option.text for option in searchResults.sortOptions track by option.value">
+			</select>
+		</div>
+
+		<div class="jam-modal" ng-if="searchResults.rangeStyle == 'slider' && searchResults.filter.length > 0">
+			<h2>Umkreis anpassen</h2>
+			<div class="jam-dist-slider">
+				<div class="item range">
+					<input type="range" name="distance" min="0" max="70" value="30" ng-model="searchResults.distSlider"
+						   ng-change="searchResults.sliderChanged()" on-release="searchResults.setChosenSuggestItem({ searchType: 'where', inputItem: searchResults.searchInput.where, selectedItem: whereSuggestItem.term, geo_param: whereSuggestItem.select })">
+					<div class="jam-distance" ng-if="searchResults.searchInput.dist == 0.5">
+						{{ ::searchResults.searchInput.dist * 1000 }} {{ ::searchResults.distSliderUnit }}
+					</div>
+					<div class="jam-distance" ng-if="searchResults.searchInput.dist != 0.5">
+						{{ searchResults.searchInput.dist }} {{ searchResults.distSliderUnit }}
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Filter -->
+		<div class="jam-modal" ng-if="searchResults.filter.length > 0">
+			<h2>Filtern nach</h2>
+			<ion-checkbox ng-repeat="item in searchResults.filter"
+						  ng-class="{ 'female': item.filter == 'frau', 'male': item.filter == 'mann', 'full-width': item.filter != 'frau' && item.filter != 'mann', disabled: item.disabled }"
+						  ng-disabled="item.disabled"
+						  ng-model="item.selected"
+						  ng-checked="item.selected"
+						  ng-click="searchResults.selectFilter(item, true)">
+				{{ ::item.name }}
+					<span class="results" ng-if="item.results > 0">
+						({{ ::item.results }})
+					</span>
+			</ion-checkbox>
+		</div>
+
+		<!--<button class="button jam-button-green button-block"
+				ng-click="searchResults.filterResults(3)"
+				ng-if="searchResults.isFilterSelected">
+			Filter anwenden
+		</button>
+		<!-- // Filter ends -->
+
+	</ion-scroll>
+
+	<div class="positionBottom">
+		<jam-footer class="footer" ng-if="!(searchResults.showWhereSuggest || searchResults.showWhatSuggest)"></jam-footer>
+	</div>
+
+
+</div>

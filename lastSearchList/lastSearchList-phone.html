@@ -1,0 +1,84 @@
+
+<ion-content class="jam-content jam-lastSearchList jam-is-phone has-header jam-profileFavourites"
+			 scroll="false">
+
+	<ion-scroll class="ion-scroll-border-fix jam-is-phone jam-premium-contents">
+
+		<div class="lastSearchList-container">
+
+			<div class="content-box-blue"
+				 ng-if="!lastSearchList.lastSearchList">
+				<i class="icons ion-information-circled"></i>
+				<p>
+					<b>Meine letzten Suchen</b>
+				</p>
+				<p>
+					Sie haben noch keine Suche ausgelöst. Die Speicherung Ihrer letzten Sucheingaben ermöglicht die Wiederholung Ihrer Arztsuchen mit einem Klick.
+				</p>
+			</div>
+
+			<a ng-if="!lastSearchList.lastSearchList"
+
+			   ui-sref="home"
+			   class="button button-full btn-big jam-icon-telephone">
+				Jetzt Ärzte suchen
+			</a>
+
+			<div class="jam-search-results-list"
+				 ng-if="lastSearchList.lastSearchList" >
+
+				<div class="list list-content"
+					 ng-click="lastSearchList.loadLastSearch({ objFromCache: cachedItem })"
+					 ng-repeat="cachedItem in lastSearchList.lastSearchList">
+					<!-- Profil -->
+					<div class="item item-thumbnail-left item-icon-right"
+						 ng-if="cachedItem.what_name_nice.refId">
+						<div class="portrait portrait-mini portrait-{{ cachedItem.portrait.sprite }}">
+							<img ng-src="{{cachedItem.portrait.pfad}}/medium/{{cachedItem.portrait.datei}}"
+								 ng-if="(cachedItem.portrait)"
+								 width="50"
+								 height="66">
+						</div>
+						<h2>
+							{{ ::cachedItem.what_name_nice.name_nice }}
+							<br ng-if="cachedItem.fach_string[0] != '' && cachedItem.what_name_nice.name_nice != ''" />
+							<span class="grey-text"
+								  ng-if="cachedItem.fach_string[0]">
+								{{ ::cachedItem.fach_string[0] }}
+							</span>
+						</h2>
+						<i class="icon ion-chevron-right"></i>
+					</div>
+					<!-- /Profil -->
+
+					<!-- Fach-/Orstssuche -->
+					<div class="item item-thumbnail-left item-icon-left item-icon-right"
+						 ng-if="!cachedItem.what_name_nice.refId">
+						<div class="left-search-icon">
+							<i class="icon ion-ios-search"></i>
+						</div>
+						<h2>
+							{{ ::cachedItem.what_name_nice.what }}
+							<br ng-if="cachedItem.what_name_nice.address != '' && cachedItem.what_name_nice.what != ''" />
+							<span class="grey-text"
+								  ng-if="cachedItem.what_name_nice.address != '' && cachedItem.what_name_nice.what != ''">
+								{{ ::cachedItem.what_name_nice.address }}
+							</span>
+							<span  ng-if="cachedItem.what_name_nice.address != '' && cachedItem.what_name_nice.what == ''">
+								{{ ::cachedItem.what_name_nice.address }}
+							</span>
+						</h2>
+						<i class="icon ion-chevron-right"></i>
+					</div>
+					<!-- /Fach-/Orstssuche -->
+				</div>
+			</div>
+		</div>
+
+		<jam-footer></jam-footer>
+
+	</ion-scroll>
+</ion-content>
+
+
+

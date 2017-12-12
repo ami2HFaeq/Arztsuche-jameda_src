@@ -1,0 +1,23 @@
+<div class="mini-profile jam-is-phone">
+	<div class="portrait {{ portraitClass }} {{ data.spriteClass }}" ng-click="miniGoToProfile()">
+		<img ng-src="{{ data.portrait.pfad + '/medium/' + data.portrait.datei }}" ng-if="data.hasProfileImage" />
+	</div>
+	<div class="mini-profile-right-details">
+		<h1 class="jam-h1 jam-ellipsis" ng-bind-html="profileHeader">{{ data.name_nice }}</h1>
+		<div class="light-font jam-h2 jam-ellipsis">{{ data.fachStringComplete }}</div>
+		<div class="row" ng-if="showMiniProfileButtons">
+			<div class="col-sm-3" ng-class="!data.ist_bewertbar && data.showOtb != 1 ? 'phone-big' : ''" ng-if="config.deviceType == 'phone'">
+				<a href="tel:{{ data.telephoneLink }}" class="button button-block icon-left ion-ios-telephone jam-icon-telephone jam-icon-midi" ng-click="JamHelperFactory.doAnrufen($event, data, 'miniprofile-' + subType);">
+					<span ng-if="!data.ist_bewertbar && data.showOtb != 1">Anrufen</span>
+				</a>
+			</div>
+			<div class="col" ng-if="data.ist_bewertbar">
+				<a class="button button-block icon-left jam-icon-rate jam-icon-midi" ng-class="config.deviceType == 'tablet' ? 'jam-tablet-portrait' : ''" ng-click="JamHelperFactory.goToReview($event, data, 'miniprofile-' + subType);">Bewerten</a>
+			</div>
+			<div class="col" ng-if="data.showOtb == 1">
+				<a ng-href="{{config.urlPrefix}}{{data.url}}uebersicht/{{data.url_hinten}}" class="button button-block icon-left jam-icon-rate jam-icon-midi no-margin">Termin</a>
+			</div>
+		</div>
+	</div>
+	<div class="clearfix"></div>
+</div>

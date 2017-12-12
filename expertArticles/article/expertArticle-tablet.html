@@ -1,0 +1,137 @@
+<ion-content class="jam-content jam-expert-article" scroll="false">
+
+	<!--<jam-facebook-overlay></jam-facebook-overlay>-->
+
+	<ion-scroll class="article-right" delegate-handle="expert-article-right">
+
+		<div class="box-container" ng-if="articlePage.article.linksToSearch">
+			<div class="box-header">
+				<h2 class="jam-h2">{{articlePage.article.linksToSearch.headline}}</h2>
+				<span>&nbsp;</span>
+			</div>
+			<ion-list ng-if="articlePage.article.linksToSearch.links && articlePage.article.linksToSearch.links.length > 0">
+				<ion-item class="showMore item-icon-right noBorder" ng-repeat="item in articlePage.article.linksToSearch.links track by $index" ng-click="goToState(item.state, {path: item.url})">
+					<span class="jam-ellipsis">{{item.name}}</span>
+					<i class="ion-icon ion-chevron-right"></i>
+				</ion-item>
+				<ion-item class="showMore noBorderLeft item-icon-right" ng-click="goToState('searchResultList', {})">
+					Alle Ärzte & Heilberufler
+					<i class="ion-icon ion-chevron-right"></i>
+				</ion-item>
+			</ion-list>
+		</div>
+
+		<div class="box-container" ng-if="articlePage.article.linksToSearch">
+			<div class="box-header">
+				<h2 class="jam-h2">Interessante Artikel zum Thema</h2>
+				<span>&nbsp;</span>
+			</div>
+			<ion-list ng-if="articlePage.article.moreArticle && articlePage.article.moreArticle.length > 0">
+				<ion-item class="articleItem item-thumbnail-left" ng-repeat="article in articlePage.article.moreArticle" ng-click="articlePage.goToArticle(article.url)">
+
+					<div class="image" ng-if="article.bild">
+						<img ng-src="{{article.bild}}">
+					</div>
+					<h2 class="jam-h2">{{article.name}}</h2>
+
+					<p ng-if="!article.sponsoredImage" class="light-font">Verfasst am {{ article.date }}<br>von <a ng-click="articlePage.gotoProfile({'fullRefId':'{{article.fullRefId}}', 'autor_url': article.autor_url}, $event);">{{ article.autor }}</a></p>
+					<p ng-if="article.sponsoredImage" class="light-font">Gesponsert von <img ng-src="{{ article.sponsoredImage }}"></p>
+					<i class="ion-icon ion-chevron-right"></i>
+				</ion-item>
+			</ion-list>
+		</div>
+
+		<jam-footer></jam-footer>
+	</ion-scroll>
+
+	<div class="article-left">
+		<jam-theme-page-bravi current-kat-id="articlePage.currentKat"></jam-theme-page-bravi>
+
+		<ion-scroll style="height:{{articlePage.scrollHeight}}px" id="article-{{ ::articlePage.article.article.id }}" delegate-handle="expert-article" overflow-scroll="true" scroll-event-interval="25">
+
+			<div class="content-box-01 jam-article">
+				<h1 class="jam-h1">{{ ::articlePage.article.article.titel }}</h1>
+
+				<div class="article-author light-font" ng-if="articlePage.article.autor && (articlePage.article.article.is_werbe_kunde != 1 || articlePage.article.sponsor_image == false)">
+					von <a ng-click="articlePage.gotoProfile(articlePage.article.autor, $event);">{{ ::articlePage.article.autor.name_nice }}</a><br>
+					verfasst am {{ articlePage.JamHelperFactory.createDatum(articlePage.article.article.datum) }}
+				</div>
+
+				<div class="article-sponsor light-font" ng-if="articlePage.article.sponsor_image && (articlePage.article.article.is_werbe_kunde == 1 && articlePage.article.sponsor_image != false)">
+					Gesponsert von <img ng-src="{{ articlePage.config.apiUrl }}{{ articlePage.article.sponsor_image }}" class="article-sponsor-image">
+				</div>
+
+				<div ng-if="articlePage.article.header_image != false" ng-bind-html="articlePage.trustAsHtml(articlePage.article.header_image)" class="header-image">
+				</div>
+				<div class="article-html" ng-compile-bind-html="articlePage.article.article.inhalt"></div>
+
+				<div class="helpfully" ng-if="articlePage.article.article">
+					<p>Wie hilfreich fanden Sie diesen Artikel?</p>
+					<star-rating ng-model="articlePage.article.userRating" init="articlePage.article.ratingInit" on-rating-select="articlePage.updateUserRating(rating)" readonly="articlePage.isReadonly"></star-rating>
+					<small class="likesCounter">{{articlePage.article.article.total_votes}}</small>
+				</div>
+
+				<div style="clear:left"></div>
+			</div>
+
+			<!-- Directive - Comments -->
+			<div class="content-box-01 comment-box" ng-if="articlePage.article.article.is_werbe_kunde != 1 && articlePage.loadedComments">
+				<h1 class="jam-h1">Kommentar abgeben oder Rückfrage stellen:</h1>
+				<form name="add-comment">
+
+					<div class="content-box-red" ng-if="articlePage.commentError" >
+						<span class="ion-android-alert"></span>
+						<p ng-bind="articlePage.commentErrorMessage"></p>
+					</div>
+
+					<label>
+						<span>Ihr Name</span>
+						<span class="info light-font">(wird veröffentlicht)</span>
+						<input type="text" name="name" ng-keypress="articlePage.clearInput(articlePage.commentData.name);" ng-class="{'error': articlePage.commentData.name.error}" ng-model="articlePage.commentData.name.value" placeholder="" required="required">
+					</label>
+
+					<label>
+						<span>Ihre E-Mail</span>
+						<span class="info light-font">(wird nicht veröffentlicht)</span>
+						<input type="email" name="mail" ng-keypress="articlePage.clearInput(articlePage.commentData.mail);" ng-class="{'error': articlePage.commentData.mail.error}" ng-model="articlePage.commentData.mail.value"  placeholder="" required="required">
+					</label>
+
+					<label>
+						<span>Ihr Kommentar</span>
+						<span class="info light-font">(wird veröffentlicht)</span>
+						<textarea name="comment" ng-keypress="articlePage.clearInput(articlePage.commentData.comment);" ng-class="{'error': articlePage.commentData.comment.error}" ng-model="articlePage.commentData.comment.value"></textarea>
+					</label>
+
+					<button type="submit" class="button button-full" ng-click="articlePage.saveComment()">Abschicken</button>
+				</form>
+
+				<div class="comment-container" ng-if="articlePage.comments && articlePage.commentsCount > 0">
+					<h1 class="jam-h1">Kommentare zum Artikel <span class="light-font" ng-if="articlePage.commentsCount <= 100">({{articlePage.commentsCount}})</span><span class="light-font" ng-if="articlePage.commentsCount > 100">(über 100)</span></h1>
+					<div class="comment" ng-repeat="comment in articlePage.comments track by $index" ng-if="$index < (articlePage.commentsStepPage*articlePage.commentsPage)">
+						<small class="light-font"><span ng-bind-html="comment.autor+'&nbsp;-&nbsp;'"></span><span>{{comment.date}}</span></small>
+						<h2 class="jam-h2" ng-bind-html="comment.title"></h2>
+						<p ng-bind-html="comment.comment"></p>
+
+						<div ng-if="comment.subComment && $index == 0" class="comment-answer" ng-repeat="subComment in comment.subComment track by $index">
+							<div class="portrait portrait-mann portrait-mini portrait-article" >
+								<img ng-if="articlePage.article.autor.portrait" ng-src="https://d1gm60ivvin8hd.cloudfront.net/premium/_uploads/portraits/medium/{{articlePage.article.autor.portrait}}">
+							</div>
+
+							<small class="light-font">
+								Antwort vom Autor am <span>{{subComment.date}}</span>
+							</small>
+							<small class="light-font">
+								von <a ng-click="articlePage.gotoProfile(articlePage.article.autor, $event);">{{articlePage.article.autor.name_nice}}</a>
+							</small>
+							<p ng-bind-html="subComment.complete_comment"></p>
+						</div>
+					</div>
+					<div style="clear:left"></div>
+
+					<button ng-if="articlePage.commentsCount > (articlePage.commentsStepPage*articlePage.commentsPage)" class="button button-full" ng-click="articlePage.showNextCommentPage();">weitere Laden</button>
+				</div>
+			</div>
+		</ion-scroll>
+	</div>
+</ion-content>
+<a class="button button-scrolltop icon ion-android-arrow-dropup-circle" ng-if="showScrollTop" ng-click="articlePage.scrollTop()"></a>

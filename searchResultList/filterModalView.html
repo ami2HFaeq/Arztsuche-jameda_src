@@ -1,0 +1,61 @@
+<ion-modal-view>
+    <ion-header-bar class="jam-modal-header">
+	    <button class="button button-clear left"
+                ng-click="searchResults.closeModal(2, false)">
+			Abbrechen
+		</button>
+	    <h1 class="jam-title title">Filtern</h1>
+
+        <button class="button button-positive button-green right" ng-if="searchResults.isFilterSelected" ng-click="searchResults.filterResults(2)">
+            Anwenden
+        </button>
+    </ion-header-bar>
+    <ion-content class="jam-modal-content">
+
+        <div class="jam-modal card" ng-if="searchResults.filter.length > 0">
+
+			<div ng-if="searchResults.rangeStyle == 'slider'">
+				<h2>Umkreis anpassen</h2>
+				<div class="jam-dist-slider modal-slider">
+					<div class="item range">
+						<input type="range" name="distance" min="0" max="70" value="30" ng-model="searchResults.distSlider" ng-change="searchResults.sliderChanged()">
+						<div class="jam-distance" ng-if="searchResults.searchInput.dist == 0.5">
+							{{ searchResults.searchInput.dist * 1000 }} {{ searchResults.distSliderUnit }}
+						</div>
+						<div class="jam-distance" ng-if="searchResults.searchInput.dist != 0.5">
+							{{ searchResults.searchInput.dist }} {{ searchResults.distSliderUnit }}
+						</div>
+					</div>
+
+					<a class="item jam-dist-current-position item-icon-right" ng-class="{'lower': !searchResults.showWhereCancel || searchResults.searchInput.where.length == 0 || !searchResults.searchInput.where}" ng-click="searchResults.getCurrentGeoPosition()">
+						<i class="icon ion-ios-navigate-outline" ng-class="{ 'ion-ios-navigate-outline-active': searchResults.geoPos }"></i>
+					</a>
+				</div>
+				<div style="clear:left;"></div>
+			</div>
+
+            <h2>Filtern nach</h2>
+            <ion-checkbox ng-repeat="item in searchResults.filter"
+                          ng-class="{ 'female': item.filter == 'frau', 'male': item.filter == 'mann', disabled: item.disabled }"
+                          ng-disabled="item.disabled"
+                          ng-model="item.selected"
+                          ng-checked="item.selected"
+                          ng-click="searchResults.selectFilter(item)">
+                {{ item.name }}
+                <span class="results" ng-if="item.results > 0">
+                    ({{ item.results }})
+                </span>
+            </ion-checkbox>
+        </div>
+        <button class="button button-block jam-button-inactive"
+                ng-click="searchResults.closeModal(2, false)"
+                ng-if="!searchResults.isFilterSelected">
+            Abbrechen
+        </button>
+        <button class="button jam-button-green button-block"
+                ng-click="searchResults.filterResults(2)"
+                ng-if="searchResults.isFilterSelected">
+            Filter anwenden
+        </button>
+    </ion-content>
+</ion-modal-view>

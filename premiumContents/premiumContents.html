@@ -1,0 +1,12 @@
+<ion-view ng-controller="PremiumContents as premiumContents">
+
+	<ion-nav-title>
+		Zusatzinfos
+
+		<!--- Home Button -->
+		<a ng-if="!config.userProfile.premium" href="{{ ::config.urlPrefix }}/home/" class="button button-clear button-positive button-right btn-padding"><i class="icons ion-home"></i></a>
+		<jam-login-button ng-if="config.userProfile.premium"></jam-login-button>
+	</ion-nav-title>
+
+	<jam-default-template phone="app/premiumContents/premiumContents-phone" tablet="app/premiumContents/premiumContents-tablet"></jam-default-template>
+</ion-view>

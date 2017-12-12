@@ -1,0 +1,15 @@
+<ion-view ng-controller="ExpertOverview as overview" title="{{ overview.pageTitle }}">
+
+	<ion-nav-title>
+		{{ overview.pageTitle }} <span ng-if="overview.data.articlesCount">({{overview.data.articlesCount.toLocaleString()}})</span>
+	</ion-nav-title>
+
+	<div ng-if="config.deviceType != 'tablet' || config.deviceOrientation != 'landscape'">
+		<jam-expert-overview template-type="jam-is-phone"></jam-expert-overview>
+	</div>
+
+	<div ng-if="config.deviceType == 'tablet' && config.deviceOrientation == 'landscape'" class="jam-is-tablet">
+		<jam-expert-overview template-type="jam-is-tablet"></jam-expert-overview>
+	</div>
+
+</ion-view>

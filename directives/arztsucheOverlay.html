@@ -1,0 +1,15 @@
+<div class="jam-modal-popup" ng-controller="JamOverlayBannerController as Banner" ng-class="{'overlay-mini': overlayStyle == 'mini', 'jam-is-phone': config.deviceType == 'phone', 'jam-is-tablet': config.deviceType != 'phone' }">
+
+	<div class="jam-modal-content erab-b" style="height:410px">
+
+		<h1 class="jam-h1">Helfen Sie uns, die Arztsuche noch besser zu machen!</h1>
+
+		<img src="/img/arztsucheUmfrage.jpg">
+		<div class="content">Wir möchten von Ihnen wissen anhand welcher Faktoren Sie sich für einen Arzt entscheiden. Die Umfrage dauert nur ca. 3 Minuten. Unter allen Teilnehmern verlosen wir fünf <strong>Amazon-Gutscheine</strong></div>
+		<div class="popup-buttons" style="padding:none;">
+			<button ng-click="Banner.dismiss()" class="button ng-binding button-default" style="color:#a4a7ab;">schließen</button>
+			<button ng-click="Banner.openHref('https://www.surveymonkey.de/r/X79V99M')" class="button ng-binding button-positive" style="float: right;">Zur Umfrage</button>
+		</div>
+	</div>
+
+</div>

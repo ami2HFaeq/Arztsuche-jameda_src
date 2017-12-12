@@ -1,0 +1,162 @@
+<ion-view ng-controller="SearchByName as search"
+		  hide-nav-bar="search.hideNavBar">
+	<ion-nav-title>
+		<div class="logo"
+			 ng-if="!search.isTablet">
+		</div>
+
+		<jam-login-button></jam-login-button>
+
+	</ion-nav-title>
+	<ion-content class="jam-home-search jam-search-by-name"
+				 ng-class="{'jam-suggest-bg': (search.showWhereSuggest || search.showWhatSuggest), 'jam-bg': (search.showWhatInputField || search.showWhereInputField), 'blue-bg': search.isTablet, 'jam-suggest-tablet': search.isTablet }">
+		<!-- What Search -->
+		<div ng-class="{'jam-inner-wrapper-tablet': search.isTablet, 'jam-inner-wrapper': (search.showWhatInputField && search.showWhereInputField && !search.isTablet), 'no-margin': (search.showWhereSuggest || search.showWhatSuggest)}">
+			<div class="logo-tablet"
+				 ng-if="search.showWhatInputField && search.showWhereInputField && search.isTablet"></div>
+			<div ng-class="{'tablet-box': search.isTablet, 'no-top-margin': (search.isTablet && (search.showWhatCancel || search.showWhereCancel))}">
+				<span class="input-label jam-label-text"
+					  ng-if="(search.showWhatInputField && search.showWhereInputField) || (search.isTablet && search.showWhatCancel)">
+					Wen m&ouml;chten Sie bewerten?
+				</span>
+				<div class="item-input-inset jam-search-bar"
+					 ng-if="search.showWhatInputField"
+					 ng-class="{item: !search.showWhatCancel, 'item-input': !search.showWhatCancel, 'bar-ios': (search.showWhatCancel && search.isIosApp), bar: search.showWhatCancel, 'bar-header': search.showWhatCancel, 'bar-stable': search.showWhatCancel}">
+					<div class="jam-search-bar-inner-left">
+						<ion-input class="item-input-wrapper jam-search-label">
+							<i class="icon ion-ios-search-strong"
+							   ng-if="search.showWhatInputField && search.showWhereInputField"></i>
+							<input type="search"
+								   placeholder="Wie heisst Ihr Arzt?"
+								   ng-click="search.controlInputFieldPosition('what')"
+								   ng-change="search.getSuggestData('what')"
+								   ng-model="search.searchInput.what"
+								   ng-if="search.showWhatInputField"
+								   ng-class="{'jam-bar-header-input': search.showWhatCancel}"
+								   autocapitalize="off"
+								   autocorrect="off"
+								   autocomplete="off"
+								   id="what-input"
+								   ng-keyup="search.checkKey('what')">
+						</ion-input>
+					</div>
+					<div class="jam-search-bar-inner-right"
+						 ng-if="search.showWhatCancel"
+						 ng-class="{ bigger: (search.showWhatCancel && search.searchInput.what) }">
+						<button ng-if="search.showWhatCancel && search.searchInput.what"
+								class="input-button button button-icon ion-ios-close-outline jam-clear-button"
+								data-tap-disabled="true"
+								on-touch="search.clearTextInput()">
+						</button>
+						<button class="button button-clear jam-cancel-button"
+								ng-click="search.controlInputFieldPosition('cancelWhat')"
+								ng-if="search.showWhatCancel">
+							Abbrechen
+						</button>
+					</div>
+				</div>
+				<!-- /What Search -->
+				<button class="button button-block jam-search-button search-by-name"
+						ng-if="search.showWhatInputField && search.showWhereInputField"
+						ng-click="search.search()">
+					Suchen
+				</button>
+			</div>
+			<div class="jam-suggest"
+				 ng-if="search.showWhereSuggest || search.showWhatSuggest">
+				<!--Was-Wen Suggest-->
+				<ion-scroll delegate-handle="suggest"
+							on-scroll="search.removeFocusFromInput()"
+							id="suggest-scroll-area">
+					<div ng-if="search.searchInput.what && search.showWhatSuggest"
+						 ng-repeat="whatResult in search.searchInput.results"
+						 ng-class="{ 'jam-suggest-box-tablet': search.isTablet, 'jam-suggest-box': !search.isTablet }">
+						<div class="item-divider">
+							{{whatResult.header}}
+						</div>
+						<div class="card">
+							<a class="item suggest-term item-icon-left item-icon-right"
+
+							   ng-if="whatResult.header == 'Namen'"
+							   ng-click="search.setChosenSuggestItem({ searchType: 'what', inputItem: search.searchInput.what, selectedItem: search.searchInput.what, gruppe_fach_param: suggestItem.select, deeplink: suggestItem.deeplink })">
+								<i class="icon ion-ios-search-strong"></i>
+								<span class="jam-suggest-item-text">Nach&nbsp;</span>
+								"{{search.searchInput.what}}"
+								<span class="jam-suggest-item-text">suchen</span>
+								<i class="icon ion-chevron-right"></i>
+							</a>
+
+							<a class="item suggest-term item-icon-right"
+
+							   ng-repeat="whatSuggestItem in whatResult.list"
+							   ng-click="search.setChosenSuggestItem({ searchType: 'what', inputItem: search.searchInput.what, selectedItem: whatSuggestItem.term, gruppe_fach_param: whatSuggestItem.select, deeplink: whatSuggestItem.deeplink, multi: whatSuggestItem.multiEntry })">
+								{{whatSuggestItem.term}} <span class="jam-suggest-item-text">{{whatSuggestItem.info}}</span>
+								<i class="icon ion-chevron-right"></i>
+							</a>
+						</div>
+					</div>
+					<!--/Was-Wen Suggest-->
+
+					<!--Static Was-Wen-Suggest-->
+					<div ng-if="!search.searchInput.what && search.showWhatInputField && !search.showWhereInputField && !search.lastSearchPersonSuggest"
+						 class="jam-suggest-box">
+						<div class="item-divider search-by-name" ng-if="!search.isTablet">
+							Geben Sie bitte den Namen Ihres Arztes ein, um eine Bewertung zu schreiben.<br /><br />
+							Mit Ihrer Bewertung helfen Sie anderen Patienten genau den richtigen Arzt zu finden.<br /><br />
+							<span class="text">Vielen Dank!</span>
+						</div>
+                        <div style="padding: 8px;" ng-if="search.isTablet">
+                            Geben Sie bitte den Namen Ihres Arztes ein, um eine Bewertung zu schreiben.<br /><br />
+                            Mit Ihrer Bewertung helfen Sie anderen Patienten genau den richtigen Arzt zu finden.<br /><br />
+                            <span class="text">Vielen Dank!</span>
+                        </div>
+					</div>
+					<div class="card"
+						 ng-if="search.lastSearchPersonSuggest">
+						<a class="item suggest-term item-icon-right item-text-wrap"
+
+						   ng-click="search.setChosenSuggestItem({ searchType: 'personSearchFromCache', objFromCache: lastSearchPerson })"
+						   ng-repeat="lastSearchPerson in search.lastSearchPersonSuggest">
+							{{ ::lastSearchPerson.what_name_nice.what }}
+							{{ ::lastSearchPerson.what_name_nice.name_nice }}
+							<i class="icon ion-chevron-right"></i>
+						</a>
+					</div>
+					<!--/Static Was-Wen-Suggest-->
+				</ion-scroll>
+			</div>
+
+			<!-- jameda facts -->
+			<div class="jam-facts"
+				 ng-if="search.showWhatInputField && search.showWhereInputField">
+				<div class="jam-facts-inner">
+					<div class="jam-facts-box-left">
+						<i class="icon ion-ios-chatbubble-outline"></i>
+						<span class="fact-number">1,5 Mio</span>
+						<span class="fact">Bewertungen</span>
+					</div>
+					<div class="jam-facts-box-middle">
+						<i class="icon ion-ios-calendar-outline"></i>
+						<span class="fact-number">85.000</span>
+						<span class="fact">online buchbare <br />Termine</span>
+					</div>
+					<div class="jam-facts-box-right">
+						<i class="icon ion-ios-location-outline"></i>
+						<span class="fact-number">275.000</span>
+						<span class="fact">eingetragene<br />Ärzte</span>
+					</div>
+				</div>
+			</div>
+			<!-- /jameda facts -->
+
+			<div class="jam-facts" ng-if="search.showWhatInputField && search.showWhereInputField && !search.isTablet">
+				<div class="headline">
+					Deutschlands gr&ouml;&szlig;te Arztempfehlung.
+				</div>
+			</div>
+		</div>
+
+		<jam-footer ng-if="!(search.showWhereSuggest || search.showWhatSuggest)" class="white-footer"></jam-footer>
+
+	</ion-content>
+</ion-view>

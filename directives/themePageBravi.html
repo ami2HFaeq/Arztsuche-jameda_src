@@ -1,0 +1,29 @@
+<div ng-controller="Bravi as bravi">
+	<div class="bravi-container">
+		<div class="bravi-previous-container" ng-if="!bravi.isGoBack && bravi.braviPreviousPageText == 'Übersicht' && bravi.loaded">
+			<div class="bravi-previous-item">
+				<span>{{ bravi.braviPreviousPageText }}</span>
+			</div>
+		</div>
+
+		<div class="bravi-previous-container" ng-if="bravi.isGoBack && bravi.braviPreviousPageText != '' && bravi.loaded" ng-click="bravi.goBack({{ bravi.braviPreviousPage }});">
+			<div class="bravi-previous-item">
+				<a>{{ bravi.braviPreviousPageText }}</a>
+			</div>
+		</div>
+
+		<i class="icon ion-chevron-right" ng-if="bravi.loaded"></i>
+
+		<div class="bravi-next-container" ng-if="bravi.braviNextPageText == '' && bravi.loaded" ng-click="bravi.showBravi('next')">
+			<div class="bravi-next-item">
+				<a>Alle Themen <i class="icon ion-arrow-down-b"></i></a>
+			</div>
+		</div>
+
+		<div class="bravi-next-container" ng-if="bravi.braviNextPageText != '' && bravi.loaded" ng-click="bravi.showBravi('next')">
+			<div class="bravi-next-item">
+				<a>{{ bravi.braviNextPageText }} <i class="icon ion-arrow-down-b"></i></a>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,28 @@
+<ion-side-menu side="left" jam-expose-aside-when="(min-width: 900px)" class="jam-menu city-bg" ng-controller="JamMenu as menu">
+	<ion-content>
+		<ion-list ng-if="menu.menuData">
+			<div class="logo" ng-click="menu.goHome();"></div>
+
+			<ion-item ng-if="!menuItem.hide" ng-repeat="menuItem in menu.menuData" ui-sref="{{menuItem.sref}}" ng-class="{'item-icon-right':menuItem.iconR,'item-icon-left':menuItem.iconL}" nav-clear="" jam-menu-close="" ui-sref-active="active" ng-click="menu.trackMenuClick(menuItem.sref);">
+				<i class="icon" ng-class="menuItem.iconL" ng-if="menuItem.iconL"></i>
+				{{menuItem.name}}
+				<i class="icon" ng-class="menuItem.iconR" ng-if="menuItem.iconR"></i>
+			</ion-item>
+		</ion-list>
+	</ion-content>
+	<ion-footer-bar class="bar-stable jam-menu-footer" ng-if="menu.showFooter">
+
+		<ion-item ng-if="((menuItem.needLogin && menu.config.userProfile.user) || (!menuItem.needLogin && !menu.config.userProfile.user)) && !menuItem.hide" ng-repeat="menuItem in menu.footerMenuData" ui-sref="{{menuItem.sref}}" ng-class="{'item-icon-right':menuItem.iconR,'item-icon-left':menuItem.iconL}" nav-clear="" jam-menu-close="" ui-sref-active="active">
+			<i class="icon" ng-class="menuItem.iconL" ng-if="menuItem.iconL && !menuItem.image"></i>
+			<div class="login-teaser left" ng-if="menuItem.image">
+				<div class="image">
+					<img ng-src="{{menuItem.image}}">
+				</div>
+			</div>
+			<span class="leftBadge" ng-if="menuItem.iconLBadge">{{menuItem.iconLBadge}}</span>
+			<span class="badge-notification badge-assertive" ng-if="menuItem.bubble && menuItem.bubble > 0">{{menuItem.bubble}}</span>
+			{{menuItem.name}}
+			<i class="icon" ng-class="menuItem.iconR" ng-if="menuItem.iconR"></i>
+		</ion-item>
+	</ion-footer-bar>
+</ion-side-menu>

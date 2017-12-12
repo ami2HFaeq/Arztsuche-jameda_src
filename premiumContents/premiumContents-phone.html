@@ -1,0 +1,24 @@
+
+<ion-content class="jam-content jam-page-premium-contents jam-is-phone has-header" id="premium-contents-{{ $parent.data.ref_id + '_' + $parent.data.art }}" scroll="false">
+
+	<jam-mini-profile template-type="jam-is-phone" template-sub-type="premium-contents"></jam-mini-profile>
+
+	<ion-scroll class="ion-scroll-border-fix jam-is-phone jam-premium-contents">
+
+
+		<div class="content-box-01">
+
+			<div ng-bind-html="$parent.data.currentPremiumContents.content"></div>
+
+			<div ng-bind-html="trustAsHtml($parent.data.currentPremiumContents.styles)"></div>
+
+		</div>
+
+		<jam-footer></jam-footer>
+
+	</ion-scroll>
+
+</ion-content>
+
+
+

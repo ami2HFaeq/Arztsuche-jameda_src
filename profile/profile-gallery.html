@@ -1,0 +1,11 @@
+<div ng-if="profile.data.bilder || profile.data.hasProfileImage" class="modal image-modal transparent" ng-click="profile.closeModal()">
+	<ion-slide-box on-slide-changed="profile.slideChanged('big')" show-pager="false" delegate-handle="profile-gallery-big">
+		<ion-slide ng-if="profile.data.hasProfileImage">
+			<img ng-src="{{ ::profile.data.portrait.pfad }}/big/{{ ::profile.data.portrait.datei }}" class="fullscreen-image" />
+		</ion-slide>
+		<ion-slide ng-repeat="image in profile.galleryImages" ng-if="profile.data.bilder">
+			<div class="loadSliderImageBig" jam-src="{{ image.pfad }}/big/{{ image.datei }}" jam-width="100%" jam-height="100%"></div>
+			<!--<img ng-src="{{ image.pfad }}/big/{{ image.datei }}" class="fullscreen-image" />-->
+		</ion-slide>
+	</ion-slide-box>
+</div>

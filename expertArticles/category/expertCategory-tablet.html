@@ -1,0 +1,74 @@
+<ion-content class="jam-content jam-is-tablet has-header jam-category" scroll="false">
+
+	<ion-scroll class="ion-scroll-border-fix jam-is-tablet" delegate-handle="mainScroll">
+
+		<jam-theme-page-bravi></jam-theme-page-bravi>
+
+		<div class="content-box-01">
+			<div class="jam-category-top-teaser">
+				<h1 class="jam-h1">{{ category.category.teaser.main[0].title }}</h1>
+				<br>
+				<p class="light-font">{{ category.category.teaser.main[0].teaser }}</p>
+				<div class="teaser-info" ng-if="category.category.sponsorImage">Gesponsert von <img ng-src="{{ category.category.sponsorImage }}"></div>
+			</div>
+		</div>
+
+		<jam-teaser-big teaser-data="category.category"></jam-teaser-big>
+
+		<jam-teaser-small teaser-data="category.category"></jam-teaser-small>
+
+		<div class="loadmore" ng-if="category.category.nextPage != false && !category.hideMore">
+			<button class="button button-full jam-icon-telephone" ng-click="category.loadMoreArticles(category.category.nextPage)">Weitere Artikel anzeigen <i class="icons ion-chevron-down"></i></button>
+		</div>
+		<br>
+		<br>
+	</ion-scroll>
+	<div class="col-40">
+		<ion-scroll delegate-handle="rightScroll" style="height: 100%">
+			<div class="box-container" ng-if="category.category.premiumPartners">
+				<div class="box-header">
+					<h2 class="jam-h2">Sie suchen einen passenden Arzt für Ihre Symptome?</h2>
+					<span>Anzeige</span>
+				</div>
+				<ion-list ng-if="category.category.premiumPartners">
+					<ion-item class="content-box-01 no-padding item-thumbnail-left" ng-repeat="premiumItem in category.category.premiumPartners track by $index" ng-click="category.goTo('profile', premiumItem)">
+
+						<div class="rating rating-{{ premiumItem.gesamt_note | number:0 }}"
+							 ng-if="premiumItem.gesamt_note >= 0">
+							<h3 class="jam-h3">Note</h3>
+							<div class="rating-value">{{ premiumItem.gesamt_note_formatted }}</div>
+						</div>
+						<div class="rating rating-0"
+							 ng-if="premiumItem.ist_bewertbar != false && !premiumItem.gesamt_note">
+							<h3 class="jam-h3">Note</h3>
+							<div class="rating-value">-</div>
+						</div>
+
+						<div class="portrait portrait-small portrait-{{ ::premiumItem.portrait.sprite }}" ng-click="category.goTo('profile', premiumItem)">
+							<img ng-src="{{premiumItem.portrait.pfad}}/small/{{premiumItem.portrait.datei}}" ng-if="premiumItem.portrait.datei" width="63" height="83">
+						</div>
+
+						<h2 class="jam-h2" ng-bind-html="premiumItem.name_nice"></h2>
+						<p>
+							{{premiumItem.strasse}}<br>
+							{{premiumItem.plz}} {{premiumItem.ort}}
+						</p>
+					</ion-item>
+					<ion-item class="showMore item-icon-right" ng-click="category.goTo('search', params)">
+						Alle Ärzte zum Thema
+						<i class="ion-icon ion-chevron-right"></i>
+						<!--<a href="/profil/geschaeftsstellen/3149_2/" class="button button-block jam-next-page icon-right ion-chevron-right ng-binding">Alle Abteilungen dieser Krankenkasse</a>-->
+					</ion-item>
+				</ion-list>
+			</div>
+
+			<jam-footer class="footer"></jam-footer>
+		</ion-scroll>
+
+
+		<div class="positionBottom" ng-if="!category.category.premiumPartners">
+			<jam-footer class="footer"></jam-footer>
+		</div>
+	</div>
+</ion-content>
+

@@ -1,0 +1,568 @@
+<ion-content class="jam-content jam-page-otb jam-is-phone has-header" id="otb-{{ $parent.data.ref_id + '_' + $parent.data.art }}" scroll="false">
+	<ion-scroll class="ion-scroll-border-fix jam-is-phone" delegate-handle="otbScroll">
+
+		<div class="otb-step-1" ng-if="curStepId == 'schritt-3'">
+			<div class="content-box-01 jam-otb" style="display: none;" id="otb1-calendar-box">
+				<div id="kalender_container{{ ::data.ref_id }}" class="kalender_container">
+					<div class="kalender_headline">
+						<a onclick="return jamOTVKalOtb1.slideKalender('rechts', this);" class="jamOTV pfeil_weiter ion-chevron-left pfeil_weiter_disabled" id="otbButtonPrevious"></a>
+						<div class="jamOTV kalender_head_text" id="kalender_head_text"></div>
+						<a onclick="return jamOTVKalOtb1.slideKalender('links', this);" class="jamOTV pfeil_weiter ion-chevron-right" id="otbButtonNext"></a>
+					</div>
+					<div class="kalender_viewport">
+						<div id="kalender_slider_header" style="width: 100000px; white-space: nowrap; overflow: hidden;"></div>
+						<ion-scroll class="kalender_slider" style="width: 100000px; white-space: nowrap; overflow: hidden; margin-left: 0px; height: 150px;">
+							<div id="kalender_slider_content_box" style="position: relative; height: 150px;">
+								<div id="kalender_slider_content"></div>
+							</div>
+						</ion-scroll>
+					</div>
+					<div class="kalender_scroller_overlay"></div>
+					<div id="kalender_ausgegraut{{ ::data.ref_id }}" class="cal-style">
+						<div class="kalender_ausgegraut_msg"></div>
+					</div>
+				</div>
+			</div>
+
+			<div class="content-box-01">
+				<h2 class="jam-h2 header-bottom-margin">Ihre Terminbuchung</h2>
+				<div class="selected-appointment content-bottom-margin">
+					<div class="appointment-date">{{ otbDetails.formattedDate }}</div>
+					<a ng-click="showOtb1Calendar()" ng-if="!otb.showHint">ändern</a>
+					<div class="clearfix"></div>
+				</div>
+
+				<div class="appointment-reason-container" data-tap-disabled="true">
+					<select class="jam-select otb-service insurance deselected" name="insuranceType" ng-change="toggleOtbInsuranceType()" ng-model="otbDetails.insuranceType">
+						<option value="kasse">Gesetzlich versichert</option>
+						<option value="privat">Privat versichert</option>
+					</select>
+				</div>
+
+				<div class="appointment-reason-container" data-tap-disabled="true">
+					<select class="jam-select service" ng-class="showOtb1ServiceError ? 'jam-error' : ''" ng-change="checkOtb1Termin(this);" ng-model="serviceSelect" ng-disabled="otb.disableServiceType">
+						<option value="0">Behandlungsgrund wählen</option>
+						<option value="{{item.id}}" ng-value="{{item.id}}" ng-repeat="item in data.otb.services track by $index" ng-if="config.insuranceTypeIds[otbDetails.insuranceType].indexOf(item.insurance_type) != -1">
+							{{item.title}}
+						</option>
+					</select>
+				</div>
+
+				<br ng-if="showOtb1ServiceError">
+				<div class="content-box-red" ng-if="showOtb1ServiceError">
+					<span class="ion-android-alert"></span>
+					<p>
+						Bitte wählen Sie zunächst einen Behandlungsgrund aus, damit wir Ihnen passende Termine vorschlagen können.
+					</p>
+				</div>
+
+				<br ng-if="otb.showServiceSelectError">
+				<div class="content-box-red" ng-if="otb.showServiceSelectError">
+					<span class="ion-android-alert"></span>
+					<p ng-bind-html="otb.serviceSelectErrorText"></p>
+					<a class="button button-block hide-activated" ng-click="showOtb1Calendar()">Termin &auml;ndern</a>
+				</div>
+
+				<br ng-if="otb.showInsuranceHint && !otb.showServiceSelectError">
+				<div class="content-box-blue" ng-if="otb.showInsuranceHint && !otb.showServiceSelectError">
+					<i class="icons ion-information-circled"></i>
+					<p><strong>Bitte be&shy;acht&shy;en Sie:</strong><br>Dieser Ter&shy;min wird aus&shy;schließlich für Selbst&shy;zahl&shy;er an&shy;ge&shy;boten. Wenn Sie gesetz&shy;lich ver&shy;sichert sind, müssen Sie die Kosten für die Be&shy;handlung selbst über&shy;nehmen.</p>
+
+					<div class="confirm-box" ng-click="otb.toggleAcceptInvoice()" ng-class="{'error': otb.showAcceptError}">
+						<div class="jam-checkbox " ng-class="{'ion-ios-checkmark':otb.checkboxAcceptInvoice, 'ion-ios-circle-outline':!otb.checkboxAcceptInvoice}"></div>
+						<div class="confirm-info">
+							<strong>Ja, damit bin ich einverstanden.</strong>
+						</div>
+					</div>
+					<br>
+				</div>
+
+				<br ng-if="otb.showHint">
+				<div class="content-box-blue" ng-if="otb.showHint">
+					<span class="icons ion-information-circled"></span>
+					<p ng-bind-html="otb.hintMessage"></p>
+				</div>
+
+				<div class="otb-service-info" ng-if="!showOtb1ServiceError && !otb.showServiceSelectError && !otb.isErrorVisible">
+					<div ng-if="otb.serviceDescription != ''" class="info-text">
+						<div class="portrait portrait-small portrait-{{ data.portrait.sprite }}" ng-class="{'portrait-mann': !data.portrait.sprite}">
+							<img ng-src="{{data.portrait.pfad}}/small/{{data.portrait.datei}}" ng-if="data.portrait.datei">
+						</div>
+						<div class="light-font" ng-bind-html="otb.serviceDescription"></div>
+					</div>
+					<div class="row" id="ota_form_preisspanne_container">
+						<div class="col" id="ota_form_preisspanne_title">Preis / Zuzahlung</div>
+						<div style="width:70%; -webkit-flex:initial; max-width:inherit;" class="col col-25 otb-service-price" ng-bind-html="otb.price"></div>
+					</div>
+				</div>
+
+				<div id="ota_service_error" style="display: none;">
+					<br>
+					<div class="content-box-red">
+						<span class="ion-android-alert"></span>
+						<p>
+							<span>Lieber Patient, leider benötigt diese Behandlung mehr Zeit, als bei Ihrem gewählten Termin verfügbar ist. Bitte wählen Sie einen anderen Termin.</span><br />
+							<br />
+							<a  class="button button-block hide-activated" ng-click="showOtb1Calendar()">Termin &auml;ndern</a>
+						</p>
+					</div>
+				</div>
+
+				<div class="jam-h2 otb-message-to-doctor-box header-bottom-margin" ng-class="{'no-message-margin': otb.serviceDescription == ''}" ng-if="!otb.showServiceSelectError">
+					Optional: persönl. Frage<span class="ion-ios-plus-outline" ng-click="toggleDoctorMessage()" ng-if="!otbDetails.showDoctorMessage" id="toggleOtbDoctorMessage">hinzufügen</span>
+				</div>
+				<textarea allowScroll="true" placeholder="Haben Sie noch Fragen an {{ ::data.name_kurz }}?" class="jam-input full-width" ng-keyup="updateDoctorMessage()" ng-if="otbDetails.showDoctorMessage" ng-blur="resetWindowHeight()" id="otbDoctorMessage">{{ ::otbDetails.doctorMessage }}</textarea>
+
+
+				<div ng-if="!isLoggedIn">
+					<br>
+					<button ng-if="!otb.showServiceSelectError" class="button button-block jam-next-page icon-right ion-chevron-right show-otb-step-2a-button" ng-click="showOtbStep2a()" ng-class="{'deactivated': otb.disableButton}">Weiter zu Schritt 4</button>
+					<button ng-if="otb.showServiceSelectError" class="button button-block jam-next-page icon-right ion-chevron-right show-otb-step-2a-button jam-button-inactive" ng-class="{'deactivated': otb.disableButton}">Weiter zu Schritt 4</button>
+				</div>
+
+				<div ng-if="isLoggedIn">
+
+					<br>
+					<div class="content-box-blue">
+						<span class="ion-ios-contact-outline"></span>
+						<p>
+							Angemeldet als <strong>{{ otbDetails.email1 }}</strong><br>
+							<a ng-click="otb1Logout()">Sie sind ein anderer Nutzer?</a>
+						</p>
+					</div>
+
+					<br>
+					<button ng-if="!otb.showServiceSelectError" class="button button-block jam-next-page icon-right ion-chevron-right show-otb-step-2a-button" ng-click="showOtbStep2b(true)">Weiter zu Schritt 4</button>
+					<button ng-if="otb.showServiceSelectError" class="button button-block jam-next-page icon-right ion-chevron-right show-otb-step-2a-button jam-button-inactive">Weiter zu Schritt 4</button>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="content-box-01 otb-step-2a" ng-if="curStepId == 'schritt-4a'">
+
+			<h2 class="jam-h2 header-bottom-margin">Ihre Terminbuchung</h2>
+			<p>
+				Bitte geben Sie Ihre E-Mail Adresse an. An diese Adresse schicken wir Ihnen den ver&shy;ein&shy;barten Termin sowie alle wei&shy;teren Termin-Informationen. Achten Sie daher auf eine korrekte Schreib&shy;weise.
+			</p>
+
+			<input type="email" autocapitalize="off" data-ng-model="otbDetails.email1" placeholder="beispiel@email.de" ng-blur="resetWindowHeight()" class="jam-input full-width" name="otbEmail1" id="otbEmail1" ng-keyup="checkOtbEmail1()" />
+			<div class="otb-email-checkmark" ng-if="showOtb2Password">
+				<span class="icon ion-ios-checkmark"></span>
+			</div>
+
+			<div ng-if="showOtb2Info">
+				<ul class="jam-check-list">
+					<li><span class="ion-ios-checkmark"></span>Wir garantieren höchste Sicherheit</li>
+					<li><span class="ion-ios-checkmark"></span>Sie erhalten keine Werbung</li>
+					<li><span class="ion-ios-checkmark"></span>Es entstehen Ihnen keine Kosten</li>
+				</ul>
+
+				<p class="light-font">
+					Ihre Daten werden ausschließlich zur Abwicklung Ihrer Terminbuchung verwendet und nur verschlüsselt an den Arzt übertragen.
+				</p>
+			</div>
+
+			<div ng-if="showOtb2Password">
+				<p class="light-font italic content-bottom-margin">
+					Zu dieser E-Mail Adresse gibt es einen Account.
+				</p>
+
+				Passwort
+				<input type="password" class="jam-input full-width" name="otbPassword" id="otbPassword" ng-keyup="checkOtbPassword()" ng-blur="resetWindowHeight()" />
+
+				<div class="right" ng-if="showOtb2SendPassword">
+					<a ng-click="sendOtb2Password()" class="underline">Passwort vergessen?</a>
+				</div>
+
+				<div class="persistant-login-container">
+					<div ng-if="config.environment != 'app'" class="jam-toggle-v2" ng-class="{'selected': otbDetails.persist_login}" ng-click="togglePersistLogin(otbDetails.persist_login)">
+						<input type="hidden" ng-model="otbDetails.persist_login" name="persist_login">
+						<span class="radio-off ion-ios-circle-outline"></span>
+						<span class="radio-on ion-android-radio-button-on"></span>Angemeldet bleiben
+					</div>
+				</div>
+
+			</div>
+
+			<div ng-if="showOtb2Error">
+				<br />
+				<div class="content-box-red">
+					<span class="ion-android-alert"></span>
+					<p>
+						{{ ::otb2Error }}
+					</p>
+				</div>
+			</div>
+
+			<div ng-if="showOtb2Success">
+				<br />
+				<div class="content-box-green">
+					<span class="ion-ios-checkmark"></span>
+					<p>
+						{{ ::otb2Success }}
+					</p>
+				</div>
+			</div>
+
+
+			<p class="light-font otb-ssl">
+				<span class="ion-locked"></span>Sichere & zertifizierte SSL-Datenübertragung
+			</p>
+			<button class="button button-block jam-next-page icon-right ion-chevron-right jam-button-inactive show-otb-step-2b-button" ng-click="checkStep2a()">Weiter zu Schritt 5</button>
+
+		</div>
+
+
+
+		<div class="content-box-01 otb-step-2b" ng-if="curStepId == 'schritt-4b'">
+
+			<h2 class="jam-h2 header-bottom-margin">Diese Daten benötigt {{ ::data.name_kurz }} noch von Ihnen für die Terminbuchung:</h2>
+
+			<a ng-click="backToStep2a()" class="form-header-link" ng-if="otb2EmailIsEditable">ändern</a>
+			<h2 class="jam-h2 header-top-margin">Ihre E-Mail Adresse</h2>
+
+			<input type="email" autocapitalize="off" data-ng-model="otbDetails.email1" placeholder="beispiel@email.de" class="jam-input full-width" ng-blur="resetWindowHeight()" name="otb2Email1" id="otb2Email1" ng-disabled="true" />
+			<div class="otb-email-checkmark">
+				<span class="icon ion-ios-checkmark"></span>
+			</div>
+			<div class="clearfix"></div>
+
+
+			<h2 class="jam-h2 header-top-margin">Anrede</h2>
+
+			<div class="row jam-toggle-box content-bottom-margin">
+				<div class="col jam-toggle-left" id="otb-gender-w" ng-class="otbDetails.gender == 'w' ? 'selected' : ''" ng-click="toggleOtbGender('w')"><span class="ion-android-radio-button-on"></span><span class="ion-ios-circle-outline"></span>Frau</div>
+				<div class="col jam-toggle-right" id="otb-gender-m" ng-class="otbDetails.gender == 'm' ? 'selected' : ''" ng-click="toggleOtbGender('m')"><span class="ion-ios-circle-outline"></span><span class="ion-android-radio-button-on"></span>Herr</div>
+			</div>
+
+
+			<h2 class="jam-h2 header-top-margin">Ihr Name</h2>
+
+			<input type="text" data-ng-model="otbDetails.firstname" placeholder="Vorname" class="jam-input full-width" ng-blur="resetWindowHeight()" name="otb2Firstname" id="otb2Firstname" ng-keyup="checkOtb2bData(false)" />
+			<input type="text" data-ng-model="otbDetails.lastname" placeholder="Nachname" class="jam-input full-width" ng-blur="resetWindowHeight()" name="otb2Lastname" id="otb2Lastname" ng-keyup="checkOtb2bData(false)" />
+
+
+			<span class="ion-information-circled light-font" ng-click="showEmailRepeatInfo()" ng-if="otb2EmailIsEditable"></span>
+			<h2 class="jam-h2 header-top-margin" style="margin-top: 16px !important;" ng-if="otb2EmailIsEditable">Wiederholung E-Mail Adresse</h2>
+
+			<input type="email" data-ng-model="otbDetails.email2" class="jam-input full-width" ng-blur="resetWindowHeight()" name="otb2Email2" id="otb2Email2" ng-if="otb2EmailIsEditable" ng-keyup="checkOtb2bData(false)" />
+
+
+
+			<span class="ion-information-circled light-font" ng-click="showPhoneInfo()" ng-if="otb2TelephoneIsEditable"></span>
+			<h2 class="jam-h2 header-top-margin" style="margin-top: 16px !important;">Ihre Handynummer</h2>
+
+			<input type="tel" data-ng-model="otbDetails.telephone" class="jam-input full-width" ng-blur="resetWindowHeight()" name="otb2Telephone" id="otb2Telephone" ng-keyup="checkOtb2bData(false)" ng-disabled="!otb2TelephoneIsEditable" />
+
+
+			<h2 class="jam-h2 header-top-margin" style="margin-top: 16px !important;">Waren Sie schon bei {{ ::data.name_kurz }} in Behandlung?</h2>
+
+			<div class="row jam-toggle-box content-bottom-margin">
+				<div class="col jam-toggle-left" id="otb-isnewpatient-y" ng-class="otbDetails.isNewPatient == 'y' ? 'selected' : ''" ng-click="toggleOtbIsnewpatient('y')"><span class="ion-android-radio-button-on"></span><span class="ion-ios-circle-outline"></span>Ja</div>
+				<div class="col jam-toggle-right" id="otb-isnewpatient-n" ng-class="otbDetails.isNewPatient == 'n' ? 'selected' : ''" ng-click="toggleOtbIsnewpatient('n')"><span class="ion-ios-circle-outline"></span><span class="ion-android-radio-button-on"></span>Nein</div>
+			</div>
+
+
+			<h2 class="jam-h2 header-top-margin" style="margin-top: 16px !important;">Wie soll {{ ::data.name_kurz }} Sie bei Rückfragen kontaktieren?</h2>
+
+			<div data-tap-disabled="true">
+				<select class="jam-select" name="otb2Notify" id="otb2Notify" ng-change="checkOtb2bData(false)" ng-model="notifySelect" ng-blur="resetWindowHeight()" ng-options="option.name for option in notifyOptions track by option.id">
+				</select>
+			</div>
+			<br /><br />
+			<button class="button button-block jam-next-page icon-right ion-chevron-right jam-button-inactive show-otb-step-2c-button" ng-click="showOtbStep2c()">Weiter zu Schritt 5</button>
+
+		</div>
+
+
+		<div class="otb-step-2c" ng-if="curStepId == 'schritt-4c'">
+
+			<div class="content-box-01">
+
+				<h2 class="jam-h2 header-bottom-margin">Bitte überprüfen Sie Ihre Eingaben</h2>
+
+				<ul class="jam-list-01">
+					<li>
+						<a ng-click="backToOtbStep('schritt-3', 'change_appointment')">ändern</a>
+						<span class="light-font">Ihr Termin</span>
+						<div class="default-col appointment-date jam-ellipsis">{{ otbDetails.formattedDateLong }}</div>
+						<div class="clearfix"></div>
+					</li>
+					<li>
+						<a ng-click="backToOtbStep('schritt-3', 'change_insurance')">ändern</a>
+						<span class="light-font">Ihre Versicherung</span>
+						<div class="default-col jam-ellipsis">{{ (otbDetails.insuranceType == 'kasse') ? 'Gesetzl. versichert' : 'Privat versichert' }}</div>
+						<div class="clearfix"></div>
+					</li>
+					<li>
+						<a ng-click="backToOtbStep('schritt-3', 'change_service')">ändern</a>
+						<span class="light-font">Behandlungsgrund</span>
+						<div class="default-col jam-ellipsis">{{ data.otb.services[otbDetails.serviceId].title }}</div>
+						<div class="clearfix"></div>
+					</li>
+					<li>
+						<a ng-click="backToOtbStep('schritt-4b', 'change_name')">ändern</a>
+						<span class="light-font">Ihr Name</span>
+						<div class="default-col jam-ellipsis">{{ (otbDetails.gender == 'm') ? 'Herr' : 'Frau' }} {{ ::otbDetails.firstname }} {{ otbDetails.lastname }}</div>
+						<div class="clearfix"></div>
+					</li>
+					<li>
+						<a  ng-click="backToOtbStep('schritt-4a', 'change_email')">ändern</a>
+						<span class="light-font">Ihre E-Mail Adresse</span>
+						<div class="default-col jam-ellipsis">{{ otbDetails.email1 }}</div>
+						<div class="clearfix"></div>
+					</li>
+					<li>
+						<a  ng-click="backToOtbStep('schritt-4b', 'change_phone')">ändern</a>
+						<span class="light-font">Ihre Handynummer</span>
+						<div class="default-col jam-ellipsis">{{ otbDetails.telephone }}</div>
+						<div class="clearfix"></div>
+					</li>
+					<li>
+						<span class="light-font">Ihre Nachricht</span>
+						<div class="default-col message-to-doctor"><pre>{{ (otbDetails.doctorMessage != '') ? otbDetails.doctorMessage : '-' }}</pre></div>
+						<div class="clearfix"></div>
+					</li>
+				</ul>
+
+			</div>
+
+
+			<div class="content-box-01 confirm-box confirm-box-green" ng-click="toggleCreateAccount()" ng-if="showNewAccountInfo">
+				<div class="jam-checkbox ion-ios-circle-outline jam-checkbox-create-account"></div>
+				<div class="confirm-info">
+					<h2 class="jam-h2 header-bottom-margin">Kostenloses jameda-Konto</h2>
+					<p>
+						Verwalten Sie Ihre bisherigen Termine, buchen Sie zukünftig leichter Termine und nutzen Sie in vollem Umfang die jameda Arztsuche und -bewertung.
+					</p>
+					<div class="otb3-new-password jam-userContent">
+						<h2 class="jam-h2 header-bottom-margin">Ihr Passwort</h2>
+
+						<form ng-submit="$event.stopPropagation()" ng-click="$event.stopPropagation()">
+							<div class="input-container col-70">
+
+								<input type="password" class="jam-input" name="otb3Password1" ng-model="otb.otb3Password1" id="otb3Password1" ng-keyup="checkOtb2cData(false, true, true)" placeholder="Ihr neues Passwort">
+
+								<span class="light-font hint">min 8 Zei&shy;chen, eine Zahl und ein Son&shy;der&shy;zeich&shy;en</span>
+
+								<div class="passwort-strength">
+									<div ng-if="passwordBarometer">
+										<div class="barometer code-{{passwordBarometer.code}}">
+											<span></span>
+											<span></span>
+											<span></span>
+											<span></span>
+										</div>
+									</div>
+								</div>
+								<div style="clear: left;"></div>
+							</div>
+
+
+							<div class="input-container col-70">
+								<input type="password" class="jam-input" name="otb3Password2" id="otb3Password2"  ng-model="otb.otb3Password2" ng-keyup="checkOtb2cData(false, true, true)" placeholder="Passwort Wiederholung">
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+
+
+			<div class="content-box-01 confirm-box" ng-click="toggleAcceptAgb()">
+				<div class="jam-checkbox ion-ios-circle-outline jam-checkbox-accept-agb"></div>
+				<div class="confirm-info">
+					<p>
+						Ich bin einverstanden, dass meine hier angegebenen Daten zum Zweck der Terminbuchung von jameda gespeichert, verarbeitet und verschlüsselt an {{ ::data.name_kurz }} übermittelt werden und bestätige die <span class="link" ng-click="showOtb3Agb(); $event.stopPropagation();">AGB</span>&nbsp;der jameda GmbH.
+					</p>
+					<div class="otb3-agb-container agb-container">
+						<ion-scroll class="otb3-agb" ng-click="$event.stopPropagation();">
+							<div ng-bind-html="otb3Agb"></div>
+						</ion-scroll>
+					</div>
+				</div>
+
+				<div ng-if="!showSmsHint">
+
+					<div ng-if="showOtb2cError">
+						<br />
+						<div class="content-box-red">
+							<span class="ion-android-alert"></span>
+							<p>
+								{{ ::otb2cError }}
+							</p>
+						</div>
+					</div>
+
+					<br />
+					<button class="button button-block jam-next-page icon-right ion-chevron-right jam-button-inactive show-otb-step-3-button" ng-click="showOtbStep3(); $event.stopPropagation();">{{ ::otb3NextStepText }}</button>
+				</div>
+			</div>
+
+
+			<div class="content-box-01 sms-info" ng-if="showSmsHint">
+				<div class="icon-send-sms"></div>
+				<h2 class="jam-h2 header-bottom-margin">Aktivierungscode</h2>
+				<p>
+					Im nächsten und letzten Schritt erhalten Sie von uns einen <strong>Aktivierungs-Code per SMS</strong>. Erst nach Eingabe dieses Codes wird Ihre Terminbuchung an den Arzt geschickt. Bis dahin ist der Termin 30 Minuten lang für Sie reserviert.
+				</p>
+
+				<div ng-if="showOtb2cError">
+					<br />
+					<div class="content-box-red">
+						<span class="ion-android-alert"></span>
+						<p>
+							{{ ::otb2cError }}
+						</p>
+					</div>
+				</div>
+
+				<br />
+				<button class="button button-block jam-next-page icon-right ion-chevron-right jam-button-inactive show-otb-step-3-button" ng-click="showOtbStep3()">{{ ::otb3NextStepText }}</button>
+			</div>
+
+		</div>
+
+
+		<div class="otb-step-3" ng-if="curStepId == 'schritt-5'">
+
+			<div class="content-box-01 otb-activate-info">
+
+				<h2 class="jam-h2 header-bottom-margin">Ein letzter Schritt zur Terminbuchung</h2>
+				<div class="icon-sms-is-sent"></div>
+				<p class="activate-info">
+					Wir haben soeben eine SMS mit Ihr&shy;em Aktivier&shy;ungs-Co&shy;de an die&shy;se Num&shy;mer ge&shy;schickt:<br>
+					<strong>{{ otbDetails.telephone }}</strong>
+					<br><br>
+					Bitte geben Sie den 4-stelligen Co&shy;de aus die&shy;ser SMS hier ein, um Ihre Termin&shy;buchung ab&shy;zu&shy;schicken.
+					<br><br>
+					<small class="light-font" style="line-height:13px;">Bitte be&shy;achten Sie, dass es in Aus&shy;nahme&shy;fällen bis zu 3 Minuten dauern kann, bis die SMS bei Ihnen an&shy;kommt.</small>
+				</p>
+
+
+				<h2 class="jam-h2 header-bottom-margin">Aktivierungscode</h2>
+				<input type="tel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="jam-input" ng-blur="resetWindowHeight()" name="otb3Pin" id="otb3Pin" style="width: 120px;" value="" ng-keyup="checkOtb3Data(false)" maxlength="8" />
+
+				<div ng-if="showOtb3Error">
+					<br />
+					<div class="content-box-red">
+						<span class="ion-android-alert"></span>
+						<p>
+							{{ ::otb3Error }}
+						</p>
+					</div>
+				</div>
+
+				<br />
+				<button class="button button-block jam-next-page icon-right ion-chevron-right jam-button-inactive show-otb-step-done-button" ng-click="showOtbStepDone()">Terminbuchung abschicken</button>
+
+			</div>
+
+			<div class="content-box-01">
+
+				<ul class="jam-list-01">
+					<li class="no-border">
+						<span class="ion-ios-checkmark"></span>
+						<span class="light-font">Ihr Termin</span>
+						<div class="default-col appointment-date jam-ellipsis">{{ ::otbDetails.formattedDateLong }}</div>
+						<div class="clearfix"></div>
+					</li>
+					<li>
+						<span class="ion-ios-checkmark"></span>
+						<span class="light-font">Ihre Versicherung!!</span>
+						<div class="default-col jam-ellipsis">{{ (otbDetails.insuranceType == 'kasse') ? 'Gesetzl. versichert' : 'Privat versichert' }}</div>
+						<div class="clearfix"></div>
+					</li>
+					<li>
+						<span class="ion-ios-checkmark"></span>
+						<span class="light-font">Behandlungsgrund</span>
+						<div class="default-col jam-ellipsis">{{ ::data.otb.services[otbDetails.serviceId].title }}</div>
+						<div class="clearfix"></div>
+					</li>
+					<li>
+						<span class="ion-ios-checkmark"></span>
+						<span class="light-font">Ihr Name</span>
+						<div class="default-col jam-ellipsis">{{ (otbDetails.gender == 'm') ? 'Herr' : 'Frau' }} {{ ::otbDetails.firstname }} {{ ::otbDetails.lastname }}</div>
+						<div class="clearfix"></div>
+					</li>
+					<li>
+						<span class="ion-ios-checkmark"></span>
+						<span class="light-font">Ihre E-Mail Adresse</span>
+						<div class="default-col jam-ellipsis">{{ ::otbDetails.email1 }}</div>
+						<div class="clearfix"></div>
+					</li>
+					<li>
+						<span class="ion-ios-checkmark"></span>
+						<span class="light-font">Ihre Handynummer</span>
+						<div class="default-col jam-ellipsis">{{ ::otbDetails.telephone }}</div>
+						<div class="clearfix"></div>
+					</li>
+					<li>
+						<span class="light-font">Ihre Nachricht</span>
+						<div class="default-col message-to-doctor"><pre>{{ (otbDetails.doctorMessage != '') ? otbDetails.doctorMessage : '-' }}</pre></div>
+						<div class="clearfix"></div>
+					</li>
+				</ul>
+
+				<button class="button button-block jam-next-page icon-right ion-chevron-right jam-button-inactive show-otb-step-done-button" ng-click="showOtbStepDone()">Terminbuchung abschicken</button>
+
+			</div>
+
+		</div>
+
+
+		<div class="otb-step-done content-box-01" ng-if="curStepId == 'buchung-abgeschlossen'">
+			<div class="content-box-green">
+				<span class="ion-ios-checkmark"></span>
+				<p>
+					{{ (otbDetails.gender == 'm') ? 'Lieber Herr' : 'Liebe Frau' }} {{ ::otbDetails.firstname }} {{ ::otbDetails.lastname }},<br />
+					<br />
+					vielen Dank für Ihre Terminbuchung bei {{ ::data.name_kurz }}.
+				</p>
+			</div>
+
+			<ul class="jam-list-01">
+				<li>
+					<span class="light-font">Ihr Termin</span>
+					<div class="default-col appointment-date jam-ellipsis">{{ ::otbDetails.formattedDateLong }}</div>
+					<div class="jam-ellipsis">{{ ::data.otb.services[otbDetails.serviceId].title }}</div>
+				</li>
+				<li>
+					<div class="default-col">
+						Diese genauen Termin&shy;infos und Kontakt&shy;daten von {{ ::data.name_kurz }} haben wir zur Sicherheit an die von Ihnen an&shy;ge&shy;gebene E-Mail Adresse <strong>{{ ::otbDetails.email1 }}</strong>&nbsp;gesendet.<br />
+						<br />
+						{{ ::data.name_kurz }} wird sich bei Rück&shy;fragen ge&shy;gebenen&shy;falls noch per&shy;sönlich an Sie wenden. Sollten Sie Rück&shy;fragen zu Ihrem Termin haben, wenden Sie sich bitte direkt an {{ ::data.name_kurz }}, eine Kontakt&shy;aufnahme über jameda ist nicht möglich.
+					</div>
+				</li>
+				<li>
+					<div class="default-col">
+						Die Kontaktdaten von {{ ::data.name_kurz }} lauten:<br />
+						<br />
+						<strong>{{ ::data.name_nice }}</strong><br />
+						{{ ::data.strasse }}<br />
+						{{ ::data.plz }} {{ ::data.ort }}<br />
+						Telefon: <a href="{{ ::data.telephoneLink }}">{{ ::data.tel }}</a>
+					</div>
+				</li>
+				<li>
+					<div class="default-col">
+						Bei weiteren Fragen finden Sie Informa&shy;tionen in unserem Hilfe-Bereich. Sollten Sie Ihre Frage nicht finden, helfen wir Ihnen unter der E-Mail Adresse gesundheit@jameda.de gerne weiter.<br />
+						<br />
+						Mit freundlichen Grüßen,<br />
+						Ihr jameda Team
+					</div>
+				</li>
+			</ul>
+
+			<button class="button button-block jam-next-page icon-right ion-chevron-right" ng-click="showOtbHome()">Zur Startseite</button>
+
+
+		</div>
+
+
+		<jam-footer></jam-footer>
+
+	</ion-scroll>
+
+</ion-content>
+

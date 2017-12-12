@@ -1,0 +1,25 @@
+<ion-modal-view>
+	<ion-header-bar class="jam-modal-header">
+		<button class="button button-clear left" ng-click="bravi.hideBravi()">
+			Abbrechen
+		</button>
+		<h1 class="jam-title title">Alle Themen</h1>
+	</ion-header-bar>
+	<ion-content class="jam-content jam-expert-modal" overflow-scroll="true" delegate-handle="bravi-container">
+		<ion-list ng-if="bravi.braviData.bravi && bravi.braviData.bravi.length > 0">
+			<div ng-repeat="braviItem in bravi.braviData.bravi">
+				<ion-item ng-click="bravi.toggleGroup(braviItem)" ng-class="{active: bravi.isGroupShown(braviItem)}" id="bravi-item-{{braviItem.id}}">
+					<i class="icon" ng-class="bravi.isGroupShown(braviItem) ? 'ion-android-arrow-dropup-circle' : 'ion-android-arrow-dropdown-circle'"></i>
+					&nbsp;
+					<span class="theme-text">{{braviItem.thema}}</span>
+				</ion-item>
+				<ion-item ng-if="braviItem.subKats.length == 0 && bravi.isGroupShown(braviItem)" ng-click="bravi.goTo(braviItem.url)" class="sub-kat-item item-icon-right">Alles zum Thema "{{braviItem.thema}}"</ion-item>
+				<div ng-repeat="item in braviItem.subKats" ng-if="bravi.isGroupShown(braviItem)">
+					<ion-item ng-if="$index == 0" ng-click="bravi.goTo(braviItem.url)" class="sub-kat-item item-icon-right">Alles zum Thema "{{braviItem.thema}}"<i class="icon ion-chevron-right"></i></ion-item>
+					<ion-item ng-if="$index == 0" ng-click="bravi.goTo(braviItem.url + '/' + item.kat_url)" class="sub-kat-item item-icon-right">{{item.kat}}<i class="icon ion-chevron-right"></i></ion-item>
+					<ion-item ng-if="$index > 0" ng-click="bravi.goTo(braviItem.url + '/' + item.kat_url)" class="sub-kat-item item-icon-right">{{item.kat}}<i class="icon ion-chevron-right"></i></ion-item>
+				</div>
+			</div>
+		</ion-list>
+	</ion-content>
+</ion-modal-view>

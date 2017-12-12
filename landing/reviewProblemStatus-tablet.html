@@ -1,0 +1,51 @@
+<ion-content class="jam-content jam-userContent review-problem-status">
+
+	<div class="spinner-centered" ng-if="status.loading && !status.error">
+		<br>
+		<ion-spinner></ion-spinner><br><br>
+		<span class="light-font" style="padding-left: 0">Daten werden geladen</span>
+	</div>
+
+	<div class="row">
+		<div class="col-50 col-center">
+			<div class="message-box" ng-if="!status.loading && status.error">
+				<div class="content-box-red" >
+					<span class="ion-android-alert"></span>
+					<p>
+						{{status.message}}
+						<br><br>Vielen Dank,<br>Ihr jameda Team
+					</p>
+				</div>
+			</div>
+
+			<div class="content-container" ng-if="!status.loading && !status.error">
+				<h1 class="jam-h1">Details zur Prüfung</h1>
+
+				<div class="status-row">
+					<div class="col-10">
+						<div class="progress-step-module horizontal " style="height: {{status.statusMessages.length*80+15}}px">
+							<div class="progress" style="height: {{status.status*80+(status.status*8)}}px">
+								<span></span>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-90">
+						<div class="pm-detail-status">
+							<ul>
+								<li ng-repeat="item in status.statusMessages track by $index" ng-class="{'ion-checkmark': status.status > $index, 'ion-search': status.status == $index}" ng-click="status.showDeclaration($index)">
+									<h3 class="jam-h2">{{item.title}}&nbsp;&nbsp;<a href="#" ng-if="!(status.status == $index || ($index+1 == status.status && status.status == status.statusMessages.length))">Mehr</a><span ng-if="status.status == $index || ($index+1 == status.status  && status.status == status.statusMessages.length)">Stand am {{status.curDate | date: 'dd.MM.yyyy'}}</span></h3>
+									<p class="two-lines" ng-if="status.status == $index || ($index+1 == status.status && status.status == status.statusMessages.length)">{{item.declaration}}</p>
+									<a href="#" ng-if="status.status == $index || ($index+1 == status.status && status.status == status.statusMessages.length)">Mehr</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div style="clear:left"></div>
+			</div>
+		</div>
+	</div>
+
+	<jam-footer></jam-footer>
+</ion-content>

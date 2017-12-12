@@ -1,0 +1,31 @@
+<ion-list ng-controller="TeaserSmall as teaserSmall" class="listview">
+	<div ng-if="!teaserSmall.hideMore">
+		<div collection-repeat="article in teaserData.articles" item-height="108">
+			<div class="content-box-01 teaser-small">
+				<div class="item item-thumbnail-left item-icon-right" ng-click="teaserSmall.gotoArticle(article);">
+					<div class="article-image" style="background-image: url('{{ article.img.src }}');"></div>
+					<div class="wrapper">
+						<h2>{{ teaserSmall.stringFormat(article.name) }}</h2>
+						<div class="teaser-info" ng-if="!article.sponsoredImage">Verfasst am {{ article.date }}<br>von <a ng-click="teaserSmall.gotoProfile(article, $event);">{{ article.autor }}</a></div>
+						<div class="teaser-info" ng-if="article.sponsoredImage">Gesponsert von <img ng-src="{{ article.sponsoredImage }}"></div>
+					</div>
+					<i class="icon ion-chevron-right"></i>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div ng-repeat="article in teaserData.articles" class="teaser-small-item" ng-if="teaserSmall.hideMore">
+		<div class="content-box-01 teaser-small" >
+			<div class="item item-thumbnail-left item-icon-right" ng-click="teaserSmall.gotoArticle(article);">
+				<div class="article-image" style="background-image: url('{{ article.img.src }}');"></div>
+				<div class="wrapper">
+					<h2>{{ teaserSmall.stringFormat(article.name) }}</h2>
+					<div class="teaser-info" ng-if="!article.sponsoredImage">Verfasst am {{ article.date }}<br>von <a ng-click="teaserSmall.gotoProfile(article, $event);">{{ article.autor }}</a></div>
+					<div class="teaser-info" ng-if="article.sponsoredImage">Gesponsert von <img ng-src="{{ article.sponsoredImage }}"></div>
+				</div>
+				<i class="icon ion-chevron-right"></i>
+			</div>
+		</div>
+	</div>
+</ion-list>

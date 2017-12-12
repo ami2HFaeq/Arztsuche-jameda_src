@@ -1,0 +1,22 @@
+<ion-view ng-controller="ExpertArticle as articlePage">
+
+	<ion-nav-title>
+		<div class="profile-header {{ ::articlePage.deviceType }}">
+			<div class="logo">
+				<div class="logo-claim">Deutschlands größte Arztempfehlung</div>
+			</div>
+		</div>
+		<a href="{{ articlePage.config.urlPrefix }}/home/" class="button button-clear button-positive button-right btn-padding"><i class="icons ion-home"></i></a>
+	</ion-nav-title>
+
+	<rich-snippet article-data="articlePage.article"></rich-snippet>
+
+	<div ng-if="articlePage.config.deviceType != 'tablet' || articlePage.config.deviceOrientation != 'landscape'">
+		<jam-expert-article template-type="jam-is-phone"></jam-expert-article>
+	</div>
+
+	<div ng-if="articlePage.config.deviceType == 'tablet' && articlePage.config.deviceOrientation == 'landscape'" class="jam-is-tablet">
+		<jam-expert-article template-type="jam-is-tablet"></jam-expert-article>
+	</div>
+
+</ion-view>
